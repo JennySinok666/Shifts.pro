@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#cfe0ff">
+<title>לוח המשמרות שלי — גרסה 10</title>
+<style>
+:root{color-scheme:light;--hol:#b91c1c;--bg:#f4f6fa;--card:#fff;--ink:#17233b;--muted:#687386;--line:#e1e6ef;--morning:#b9d8ff;--night:#d5c3ff;--off:#bde9ca;--daytext:#101820;--soft:#f5f7fb;--accent:#17233b}
+:root[data-theme="dark"]{color-scheme:dark;--hol:#fca5a5;--bg:#101722;--card:#192434;--ink:#edf3ff;--muted:#aab6c8;--line:#334155;--morning:#28588a;--night:#5a4388;--off:#286342;--daytext:#fff;--soft:#202d3e;--accent:#dce8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;transition:background .2s,color .2s}
+header{background:var(--accent);color:white;padding:22px 17px 19px;border-radius:0 0 22px 22px}
+.top{max-width:760px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-size:24px;margin:0 0 5px}header p{margin:0;color:#d8e1f2;font-size:13px}
+main{max-width:760px;margin:auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:14px;margin-bottom:13px}
+.legend{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}.pill{padding:7px 10px;border-radius:10px;font-size:13px;font-weight:bold;color:var(--daytext)}.pill.morning{background:var(--morning)}.pill.night{background:var(--night)}.pill.off{background:var(--off)}.before{background:var(--soft);color:var(--muted)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.bar h2{font-size:19px;margin:0}
+button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--card);color:var(--ink)}button.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}button.icon{white-space:nowrap}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.weekday{text-align:center;color:var(--muted);font-size:12px;padding:5px 0}
+.day{min-width:0;min-height:61px;padding:5px 1px;border:2px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:10px;background:var(--card);color:var(--daytext)}
+.day.morning{background:var(--morning);color:var(--daytext)}.day.night{background:var(--night);color:var(--daytext)}.day.off{background:var(--off);color:var(--daytext)}.day.before{background:var(--soft);color:var(--muted)}
+.day .num{font-weight:bold;font-size:15px}.day .kind{font-size:11px;font-weight:bold}.day.today{outline:2px solid var(--ink);outline-offset:1px}.day.selected{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}.day.empty{visibility:hidden}
+h3{margin:0 0 8px;font-size:17px}.muted{color:var(--muted);font-size:13px}.big{font-size:22px;font-weight:800;margin:8px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{font-size:13px;font-weight:bold;display:block;margin-bottom:5px}input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.stat{background:var(--soft);border-radius:11px;text-align:center;padding:11px 4px}.stat strong{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted);line-height:1.5}footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
+details summary{font-weight:750;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between}details summary::-webkit-details-marker{display:none}details summary:after{content:"＋";font-size:18px;color:var(--muted)}details[open] summary:after{content:"−"}
+.settings{margin-top:14px;border-top:1px solid var(--line);padding-top:13px}
+.day{position:relative}.day.hasmarks{padding-bottom:15px}.marks{position:absolute;bottom:3px;left:0;right:0;display:flex;justify-content:center;gap:3px}.mk{font-size:9px;font-weight:800;line-height:1;padding:2px 4px;border-radius:6px;color:#fff}.mk.sec{background:#0f766e}.mk.int{background:#b45309}
+.entry{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}.entry .tag{font-size:11px;font-weight:800;color:#fff;border-radius:6px;padding:2px 6px;margin-inline-end:6px}.entry .tag.sec{background:#0f766e}.entry .tag.int{background:#b45309}.entry button{padding:5px 9px;font-size:12px}
+.stat.total{background:var(--accent);color:var(--bg)}.stat.total span{color:inherit;opacity:.85}.hint{font-size:12px;color:var(--muted);margin:6px 0 0}.field{margin-top:9px}
+.mk.hol{background:#be123c}.mk.eve{background:#7c3aed}.mk.mod{background:#475569}.htop{position:absolute;top:2px;left:0;right:0;display:flex;justify-content:center}.day.hashol{padding-top:14px}.hollist{margin-top:14px}.hollist h3{font-size:15px;margin-bottom:4px}.entry .tag.hol{background:#be123c}.entry .tag.eve{background:#7c3aed}.entry .tag.mod{background:#475569}
+.hname{font-size:clamp(11px,2.9vw,14px);font-weight:800;line-height:1.2;color:#fff;background:#be123c;border-radius:6px;padding:2px 3px;text-align:center;max-width:100%;overflow-wrap:normal;word-break:keep-all}
+@media(max-width:390px){main{padding:9px}.card{padding:10px}.day{min-height:53px}.day .kind{font-size:10px}.bar h2{font-size:17px}.top h1{font-size:22px}}
+
+/* ===== Liquid Glass ===== */
+:root{--bg:#cfe0ff;--card:rgba(255,255,255,.34);--soft:rgba(255,255,255,.30);--line:rgba(255,255,255,.62);--ink:#0e1a30;--muted:#4b5b75;--accent:#0a84ff;--morning:rgba(86,170,255,.50);--night:rgba(170,128,255,.48);--off:rgba(80,210,140,.46);--daytext:#0b1a33;--glass-blur:blur(26px) saturate(190%);--shine:inset 0 1.5px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.25),inset 1px 0 0 rgba(255,255,255,.35),inset -1px 0 0 rgba(255,255,255,.35);--drop:0 10px 36px rgba(40,70,140,.18)}
+:root[data-theme="dark"]{--bg:#070d1c;--card:rgba(255,255,255,.09);--soft:rgba(255,255,255,.08);--line:rgba(255,255,255,.20);--ink:#f2f6ff;--muted:#a9b6cc;--accent:#5eb0ff;--morning:rgba(64,140,240,.46);--night:rgba(140,100,235,.46);--off:rgba(50,185,115,.40);--daytext:#fff;--shine:inset 0 1.5px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(255,255,255,.06),inset 1px 0 0 rgba(255,255,255,.10),inset -1px 0 0 rgba(255,255,255,.10);--drop:0 10px 36px rgba(0,0,0,.45)}
+body{background:var(--bg);min-height:100vh;position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(48vmax 48vmax at 8% 6%,#7cb8ff 0,transparent 62%),radial-gradient(44vmax 44vmax at 96% 18%,#ff9ed0 0,transparent 60%),radial-gradient(52vmax 52vmax at 80% 96%,#8be9c1 0,transparent 62%),radial-gradient(46vmax 46vmax at 4% 82%,#b9a2ff 0,transparent 60%),#cfe0ff}
+:root[data-theme="dark"] body::before{background:radial-gradient(48vmax 48vmax at 8% 6%,#1d4fa8 0,transparent 62%),radial-gradient(44vmax 44vmax at 96% 18%,#8a2a73 0,transparent 60%),radial-gradient(52vmax 52vmax at 80% 96%,#117a5c 0,transparent 62%),radial-gradient(46vmax 46vmax at 4% 82%,#4b2fa0 0,transparent 60%),#070d1c}
+header{background:var(--card);color:var(--ink);margin:12px 12px 0;border-radius:30px;border:1px solid var(--line);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shine),var(--drop);max-width:736px;margin-inline:auto;width:calc(100% - 24px)}
+header p{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:30px;padding:16px;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--shine),var(--drop)}
+button,input,select{backdrop-filter:blur(14px) saturate(170%);-webkit-backdrop-filter:blur(14px) saturate(170%)}
+button{border:1px solid var(--line);border-radius:999px;padding:10px 15px;box-shadow:var(--shine),0 3px 10px rgba(40,70,140,.10);transition:transform .12s ease,background .2s}
+button:active{transform:scale(.96)}
+button.primary{background:linear-gradient(180deg,rgba(80,170,255,.95),rgba(10,120,245,.92));color:#fff;border-color:rgba(255,255,255,.55);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 6px 18px rgba(10,132,255,.38)}
+input,select{border:1px solid var(--line);border-radius:16px;background:var(--soft);box-shadow:inset 0 1px 3px rgba(40,70,140,.10),inset 0 1.5px 0 rgba(255,255,255,.5)}
+.pill{border-radius:999px;padding:8px 13px;border:1px solid var(--line);box-shadow:var(--shine);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.day{border-radius:18px;border:1px solid rgba(255,255,255,.55);box-shadow:var(--shine);backdrop-filter:blur(10px) saturate(170%);-webkit-backdrop-filter:blur(10px) saturate(170%);background:var(--card)}
+:root[data-theme="dark"] .day{border-color:rgba(255,255,255,.16)}
+.day.selected{border-color:var(--ink);box-shadow:var(--shine),0 0 0 2px var(--ink)}
+.day.today{outline:2px solid var(--accent);outline-offset:2px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shine);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.stat.total{background:linear-gradient(180deg,rgba(80,170,255,.92),rgba(10,120,245,.90));color:#fff;border-color:rgba(255,255,255,.5)}
+.settings{border-top:1px solid var(--line)}
+.entry{border-bottom:1px solid var(--line)}
+.hname,.mk.hol{background:linear-gradient(180deg,#f0444f,#c4162a);box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+details summary{font-size:16px}
+.big{letter-spacing:-.3px}
+h1{letter-spacing:-.4px}
+</style>
+</head>
+<body>
+<header><div class="top"><div><h1>לוח המשמרות שלי</h1><p>2 בוקר · 2 לילה · 4 ימי חופש — מחזור של 8 ימים</p></div><button class="icon" id="theme" aria-label="החלפת מצב תצוגה">☾ מצב לילה</button></div></header>
+<main>
+<section class="card">
+<div class="legend"><span class="pill morning">☀ בוקר</span><span class="pill night">☾ לילה</span><span class="pill off">✓ חופש</span></div>
+<div class="bar"><button id="prev">‹ קודם</button><h2 id="title"></h2><button id="next">הבא ›</button></div>
+<div class="cal" id="cal"></div>
+<div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap"><button class="primary" id="now">החודש הנוכחי</button></div>
+</section>
+<section class="card"><h3 id="chosen"></h3><div id="detail" class="muted">לחץ על יום בלוח לפרטים.</div></section>
+<section class="card">
+<details id="income">
+<summary>צפי הכנסה והגדרות שכר</summary>
+<div class="settings">
+<h3>הוספת יום</h3>
+<div class="grid"><div><label for="entryType">סוג</label><select id="entryType"><option value="second">עבודה שנייה (נטו)</option><option value="intel">יום נוסף בתלוש — אינטל (ברוטו)</option></select></div><div><label for="extraDate">תאריך</label><input id="extraDate" type="date"></div></div>
+<div id="secondFields" class="field"><label for="extraAmount">סכום נטו (₪)</label><input id="extraAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="למשל 800"></div>
+<div id="intelFields" class="field" style="display:none">
+<div class="grid"><div><label for="intelHours">אורך היום</label><select id="intelHours"><option value="8">8 שעות — חג / בחירות / מחלה</option><option value="12">12 שעות — תגבור</option></select></div><div><label for="intelGross">ברוטו (אופציונלי)</label><input id="intelGross" type="number" min="0" step="0.01" inputmode="decimal" placeholder="אוטומטי"></div></div>
+<div class="field"><label for="intelLabel">תיאור (אופציונלי)</label><input id="intelLabel" type="text" placeholder="יום בחירות / תגבור / חג"></div>
+<p class="hint" id="intelHint"></p>
+</div>
+<button class="primary" id="addExtra" style="width:100%;margin-top:11px">＋ הוסף יום</button>
+<div class="settings">
+<h3>סיכום משמרות לפי חודש שכר</h3>
+<div><label for="salaryMonth">חודש השכר</label><input id="salaryMonth" type="month" value="2026-10"></div>
+<p class="note" id="salaryPeriodLabel"></p>
+<p class="note" id="periodText"></p>
+<div class="stats">
+<div class="stat"><strong id="periodShifts">—</strong><span>סה״כ משמרות</span></div>
+<div class="stat"><strong id="morningCount">—</strong><span>משמרות בוקר</span></div>
+<div class="stat"><strong id="nightCount">—</strong><span>משמרות לילה</span></div>
+<div class="stat"><strong id="fridayCount">—</strong><span>משמרות שישי*</span></div>
+<div class="stat"><strong id="saturdayCount">—</strong><span>משמרות שבת*</span></div>
+<div class="stat"><strong id="periodHours">—</strong><span>שעות מתוכננות (12 למשמרת)</span></div>
+</div>
+<p class="note">* ספירת שישי ושבת היא לפי תאריך תחילת המשמרת, והיא חופפת לספירת בוקר/לילה. לדוגמה, משמרת לילה שמתחילה ביום שישי נספרת גם בלילה וגם בשישי.</p>
+<div id="actualSlipStats" style="display:none;margin-top:14px">
+<h3>נתוני תלוש בפועל — אוקטובר 2026</h3>
+<div class="stats">
+<div class="stat"><strong>₪11,542.32</strong><span>ברוטו בתלוש</span></div>
+<div class="stat"><strong>₪10,713.32</strong><span>נטו לתשלום</span></div>
+<div class="stat"><strong>17</strong><span>ימי עבודה בתלוש</span></div>
+<div class="stat"><strong>199.68</strong><span>שעות בתלוש</span></div>
+<div class="stat"><strong>₪829</strong><span>ניכויים</span></div>
+<div class="stat"><strong>₪36</strong><span>שכר בסיס לשעה</span></div>
+</div>
+<p class="note">בתלוש אוקטובר נכללו גם יום הדרכה ב־24.09.2026 (08:00–17:00) ויום חג בתשלום ב־03.10.2026. אלה ימים מיוחדים שאינם חלק ממחזור המשמרות הרגיל.</p>
+</div>
+
+<h3 style="margin-top:16px">תחזית שכר</h3>
+<div class="stats">
+<div class="stat"><strong id="grossEstimate">—</strong><span>ברוטו משוער</span></div>
+<div class="stat"><strong id="netEstimate">—</strong><span>נטו משוער</span></div>
+<div class="stat"><strong id="baseEstimate">—</strong><span>שכר בסיס לפי שעות</span></div>
+<div class="stat"><strong id="premiumEstimate">—</strong><span>תוספות משוערות</span></div>
+<div class="stat"><strong id="deductionEstimate">—</strong><span>ניכויים משוערים</span></div>
+<div class="stat"><strong id="effectiveRate">—</strong><span>ברוטו ממוצע לשעה</span></div>
+<div class="stat"><strong id="intelExtraTotal">—</strong><span>תוספות ידניות אינטל (ברוטו)</span></div>
+<div class="stat"><strong id="secondTotal">—</strong><span>עבודה שנייה (נטו)</span></div>
+<div class="stat total"><strong id="grandNet">—</strong><span>סה״כ נטו משני העבודות</span></div>
+</div>
+<div id="entryList" style="margin-top:12px"></div>
+<p class="note" id="estimateExplanation"></p>
+<p class="note">התחזית מבוססת על ממוצע התלוש שסיפקת, ולא על נוסחת שכר מלאה של אינטל, ולכן אינה מדויקת לחודש עם תמהיל שונה של לילות, שישי/שבת, שעות נוספות, חגים או היעדרויות. תוספות ידניות נכללות בברוטו/נטו/ניכויים של אינטל (לא בשכר הבסיס ובתוספות המשוערות של המחזור). העבודה השנייה (נטו) נכללת רק בסה״כ.</p>
+
+</div>
+</div>
+</details>
+</section>
+<footer>גרסה 10 · הנתונים נשמרים במכשיר בלבד. אין צורך בחשבון משתמש.</footer>
+</main>
+<script>
+const months=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],wd=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+const names=['בוקר','בוקר','לילה','לילה','חופש','חופש','חופש','חופש'],cls={'בוקר':'morning','לילה':'night','חופש':'off'},symbols={'בוקר':'☀','לילה':'☾','חופש':'✓'};
+let view=new Date(),selected=new Date();view=new Date(view.getFullYear(),view.getMonth(),1);selected.setHours(0,0,0,0);
+const $=x=>document.getElementById(x);
+function parse(s){let a=s.split('-').map(Number);return new Date(a[0],a[1]-1,a[2])}
+function key(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
+function dayNumber(d){return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000)}
+function diff(a,b){return dayNumber(a)-dayNumber(b)}
+const ANCHOR=new Date(2026,9,13);
+function shift(d){let n=diff(d,ANCHOR);return names[((n%8)+8)%8]}
+function dateText(d){return `${d.getDate()} ב${months[d.getMonth()]} ${d.getFullYear()}`}
+function money(n){return new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS',maximumFractionDigits:0}).format(n)}
+function salaryPeriod(){let v=$('salaryMonth').value||monthKey(new Date()),a=v.split('-').map(Number),y=a[0],m=a[1]-1;return {start:new Date(y,m-1,24),end:new Date(y,m,23),mStart:new Date(y,m,1),mEnd:new Date(y,m+1,0),year:y,month:m}}
+function safeLoad(key,fallback){try{let value=localStorage.getItem(key);return value===null?fallback:JSON.parse(value)}catch(e){return fallback}}
+function safeSave(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){/* Storage may be unavailable; app remains usable for this session. */}}
+let secondDays=safeLoad('extraWages',[]);if(!Array.isArray(secondDays))secondDays=[];
+let intelDays=safeLoad('intelExtras',[]);if(!Array.isArray(intelDays))intelDays=[];
+function saveAll(){safeSave('extraWages',secondDays);safeSave('intelExtras',intelDays)}
+const BASE=36;
+function autoGross(h){h=Number(h)||0;return Math.min(h,8)*BASE+Math.min(Math.max(h-8,0),2)*BASE*1.25+Math.max(h-10,0)*BASE*1.5}
+function intelGrossOf(x){return Number.isFinite(Number(x.gross))&&x.gross!==null&&x.gross!==''&&Number(x.gross)>0?Number(x.gross):autoGross(x.hours)}
+function inRange(ds,a,b){let d=parse(ds);return d>=a&&d<=b}
+function entriesFor(ds){return {sec:secondDays.filter(x=>x.date===ds),int:intelDays.filter(x=>x.date===ds)}}
+function entryRow(type,x){let isSec=type==='sec';let txt=isSec?`${dateText(parse(x.date))} — ${money(Number(x.amount))} נטו`:`${dateText(parse(x.date))} — ${x.hours} שעות · ${money(intelGrossOf(x))} ברוטו${x.label?' · '+x.label:''}`;return `<div class="entry"><span><span class="tag ${isSec?'sec':'int'}">${isSec?'עבודה שנייה':'אינטל'}</span>${txt}</span><button data-del="${x.id}" data-t="${type}" aria-label="מחיקה">מחק</button></div>`}
+function countPeriod(p){let result={morning:0,night:0,friday:0,saturday:0,total:0};for(let d=new Date(p.start);d<=p.end;d.setDate(d.getDate()+1)){let s=shift(d);if(s==='בוקר'){result.morning++;result.total++}else if(s==='לילה'){result.night++;result.total++}if(s==='בוקר'||s==='לילה'){if(d.getDay()===5)result.friday++;if(d.getDay()===6)result.saturday++}}return result}
+const hebFmt=new Intl.DateTimeFormat('en-u-ca-hebrew',{day:'numeric',month:'long'});
+function heb(d){let o={};hebFmt.formatToParts(new Date(d.getFullYear(),d.getMonth(),d.getDate(),12)).forEach(x=>o[x.type]=x.value);return {day:Number(o.day),month:o.month}}
+function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n)}
+function baseHol(d){let h=heb(d),m=h.month,x=h.day;
+if(m==='Tishri'){if(x===1||x===2)return {n:'ראש השנה',t:'חג'};if(x===10)return {n:'יום כיפור',t:'חג'};if(x===15)return {n:'סוכות',t:'חג'};if(x>=16&&x<=20)return {n:'חול המועד סוכות',t:'מועד'};if(x===22)return {n:'שמיני עצרת / שמחת תורה',t:'חג'}}
+if(m==='Nisan'){if(x===15)return {n:'פסח',t:'חג'};if(x===21)return {n:'שביעי של פסח',t:'חג'};if(x>=16&&x<=20)return {n:'חול המועד פסח',t:'מועד'}}
+if(m==='Sivan'&&x===6)return {n:'שבועות',t:'חג'};
+if((m==='Adar'||m==='Adar II')&&x===14)return {n:'פורים',t:'מועד'};
+if(m==='Iyar'){if(x>=3&&x<=6){let dow=addDays(d,5-x).getDay(),tg=dow===5?4:dow===6?3:dow===1?6:5;if(x===tg)return {n:'יום העצמאות',t:'חג'};if(x===tg-1)return {n:'יום הזיכרון',t:'מועד'}}if(x===18)return {n:'ל״ג בעומר',t:'מועד'};if(x===28)return {n:'יום ירושלים',t:'מועד'}}
+if(m==='Av'&&(x===9||x===10)){let dow=addDays(d,9-x).getDay();if((x===9&&dow!==6)||(x===10&&dow===6))return {n:'תשעה באב',t:'מועד'}}
+for(let k=0;k<8;k++){let hx=heb(addDays(d,-k));if(hx.month==='Kislev'&&hx.day===25)return {n:'חנוכה — יום '+(k+1),t:'מועד'}}
+return null}
+const holCache={};
+function holidayOf(d){let k=key(d);if(k in holCache)return holCache[k];let b=baseHol(d);if(!b){let nb=baseHol(addDays(d,1));if(nb&&nb.t==='חג')b={n:'ערב '+nb.n.split(' / ')[0],t:'ערב'}}return holCache[k]=b}
+function cellText(h){let n=h.n;if(h.t==='ערב')return 'ע.חג '+n.replace('ערב ','');if(n.startsWith('חנוכה'))return 'חנוכה';if(n.startsWith('חול המועד'))return 'חוה״מ '+n.replace('חול המועד ','');return n.split(' / ')[0]}
+const holCls={'חג':'hol','ערב':'eve','מועד':'mod'};
+function holShiftText(d,h){let s=shift(d),t=(s==='בוקר'||s==='לילה')?'חל במשמרת '+s+' שלך':'חל ביום חופש שלך';if(h.t!=='מועד'&&((h.t==='חג'&&shift(addDays(d,-1))==='לילה')))t+=' · משמרת הלילה של אתמול נמשכת לתוך היום';if(h.t==='ערב'&&s==='לילה')t+=' · המשמרת נמשכת לתוך החג';return t}
+function updateHint(){let h=Number($('intelHours').value),g=Number($('intelGross').value);$('intelHint').textContent=h>0?(g>0?`ברוטו שהוזן: ${money(g)}`:`הערכה אוטומטית: ${money(autoGross(h))} ברוטו (8 שעות ראשונות ב־100%, שעתיים ב־125%, מעבר לכך 150% על בסיס ${BASE} ₪).`):''}
+function render(){
+let y=view.getFullYear(),m=view.getMonth();$('title').textContent=months[m]+' '+y;let c=$('cal');c.innerHTML='';
+wd.forEach(x=>{let e=document.createElement('div');e.className='weekday';e.textContent=x;c.appendChild(e)});
+let offset=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();
+for(let i=0;i<offset;i++){let e=document.createElement('div');e.className='day empty';c.appendChild(e)}
+for(let n=1;n<=count;n++){let d=new Date(y,m,n),s=shift(d),ds=key(d),en=entriesFor(ds),b=document.createElement('button');b.className='day '+(cls[s]||'before');if(ds===key(new Date()))b.classList.add('today');if(ds===key(selected))b.classList.add('selected');let num=document.createElement('span');num.className='num';num.textContent=n;b.appendChild(num);let kind=document.createElement('span');kind.className='kind';kind.textContent=s;b.appendChild(kind);let lab=dateText(d)+': '+s,hd=holidayOf(d),hn=null;if(hd){hn=document.createElement('span');hn.className='hname';hn.textContent=cellText(hd);lab+=', '+hd.n}if(hn)b.appendChild(hn);if(en.sec.length||en.int.length){b.classList.add('hasmarks');let mk=document.createElement('div');mk.className='marks';if(en.sec.length){mk.innerHTML+='<span class="mk sec">₪</span>';lab+=', עבודה שנייה'}if(en.int.length){mk.innerHTML+='<span class="mk int">+</span>';lab+=', תוספת אינטל'}b.appendChild(mk)}b.setAttribute('aria-label',lab);b.onclick=()=>{selected=d;$('extraDate').value=ds;render()};c.appendChild(b)}
+$('chosen').textContent=dateText(selected);let s=shift(selected),sel=entriesFor(key(selected)),hol=holidayOf(selected);
+$('detail').innerHTML='<div class="big">'+(symbols[s]||'')+' '+s+'</div>'+(s==='חופש'?(selected.getDay()===5||selected.getDay()===6?'יום חופש בסוף השבוע — לא משמרת עבודה קבועה.':'יום חופש בימי חול — אפשר להוסיף כאן שכר מהעבודה השנייה אם עבדת.'):'יום שמשויך למחזור העבודה הקבוע.')+(hol?`<div class="entry"><span class="mk hol" style="font-size:12px;padding:3px 8px">${hol.n}</span><span class="muted" style="text-align:end">${holShiftText(selected,hol)}</span></div>`:'')+sel.sec.map(x=>entryRow('sec',x)).join('')+sel.int.map(x=>entryRow('int',x)).join('');
+let p=salaryPeriod(),stats=countPeriod(p),hours=stats.total*12;
+const payslip={gross:11542.32,net:10713.32,paidHours:199.68,baseRate:BASE};
+const grossPerHour=payslip.gross/payslip.paidHours;
+const netRatio=payslip.net/payslip.gross;
+const shiftsGross=hours*grossPerHour;
+const intelRows=intelDays.filter(x=>inRange(x.date,p.start,p.end)).sort((a,b)=>a.date.localeCompare(b.date));
+const secRows=secondDays.filter(x=>inRange(x.date,p.mStart,p.mEnd)).sort((a,b)=>a.date.localeCompare(b.date));
+const manualGross=intelRows.reduce((t,x)=>t+intelGrossOf(x),0);
+const secondSum=secRows.reduce((t,x)=>t+Number(x.amount||0),0);
+const grossEstimate=shiftsGross+manualGross;
+const baseEstimate=hours*payslip.baseRate;
+const premiumEstimate=Math.max(0,shiftsGross-baseEstimate);
+const netEstimate=grossEstimate*netRatio;
+const deductionEstimate=grossEstimate-netEstimate;
+$('grossEstimate').textContent=money(grossEstimate);
+$('netEstimate').textContent=money(netEstimate);
+$('baseEstimate').textContent=money(baseEstimate);
+$('premiumEstimate').textContent=money(premiumEstimate);
+$('deductionEstimate').textContent=money(deductionEstimate);
+$('effectiveRate').textContent=money(grossPerHour);
+$('intelExtraTotal').textContent=money(manualGross);
+$('secondTotal').textContent=money(secondSum);
+$('grandNet').textContent=money(netEstimate+secondSum);
+$('estimateExplanation').textContent=`אינטל (${p.start.getDate()}.${p.start.getMonth()+1} עד ${p.end.getDate()}.${p.end.getMonth()+1}): ${stats.total} משמרות × 12 שעות = ${hours} שעות, ממוצע ברוטו ${grossPerHour.toFixed(2)} ₪ לשעה (תלוש אוקטובר), שיעור נטו ${(netRatio*100).toFixed(1)}%${intelRows.length?`, ועוד ${intelRows.length} ימים ידניים`:''}. עבודה שנייה: ${secRows.length} ימים בין ה־1 ל־${p.mEnd.getDate()} ב${months[p.month]}.`;
+$('periodShifts').textContent=stats.total;$('morningCount').textContent=stats.morning;$('nightCount').textContent=stats.night;$('fridayCount').textContent=stats.friday;$('saturdayCount').textContent=stats.saturday;$('periodHours').textContent=hours;
+$('salaryPeriodLabel').textContent=`אינטל: ${dateText(p.start)} עד ${dateText(p.end)}. עבודה שנייה: ${dateText(p.mStart)} עד ${dateText(p.mEnd)}.`;
+$('periodText').textContent=`בתקופת השכר של אינטל מתוכננות ${stats.total} משמרות: ${stats.morning} בוקר ו־${stats.night} לילה. מתוכן ${stats.friday} מתחילות ביום שישי ו־${stats.saturday} מתחילות בשבת. סך הכול ${hours} שעות לפי 12 שעות למשמרת.`;
+$('actualSlipStats').style.display=(p.year===2026&&p.month===9)?'block':'none';
+let all=[...intelRows.map(x=>['int',x]),...secRows.map(x=>['sec',x])].sort((a,b)=>a[1].date.localeCompare(b[1].date));
+$('entryList').innerHTML=all.length?all.map(([t,x])=>entryRow(t,x)).join(''):'<span class="note">לא נוספו ימים בחודש השכר הזה.</span>';
+}
+document.addEventListener('click',e=>{let b=e.target.closest('[data-del]');if(!b)return;if(!confirm('למחוק את היום?'))return;let id=b.dataset.del;if(b.dataset.t==='sec')secondDays=secondDays.filter(x=>String(x.id)!==id);else intelDays=intelDays.filter(x=>String(x.id)!==id);saveAll();render()});
+function toggleType(){let sec=$('entryType').value==='second';$('secondFields').style.display=sec?'':'none';$('intelFields').style.display=sec?'none':'';updateHint()}
+$('entryType').onchange=toggleType;$('intelHours').onchange=updateHint;$('intelGross').oninput=updateHint;
+$('addExtra').onclick=()=>{let date=$('extraDate').value;if(!date){alert('יש לבחור תאריך.');return}
+if($('entryType').value==='second'){let amount=Number($('extraAmount').value);if($('extraAmount').value===''||!Number.isFinite(amount)||amount<0){alert('יש להזין סכום נטו תקין.');return}secondDays.push({id:Date.now(),date,amount});$('extraAmount').value=''}
+else{let h=Number($('intelHours').value),g=$('intelGross').value;if(!(h>0&&h<=24)){alert('יש להזין מספר שעות תקין.');return}intelDays.push({id:Date.now(),date,hours:h,gross:g===''?null:Number(g),label:$('intelLabel').value.trim()});$('intelGross').value='';$('intelLabel').value='';updateHint()}
+saveAll();let d=parse(date);view=new Date(d.getFullYear(),d.getMonth(),1);selected=d;render()};
+$('salaryMonth').onchange=render;$('salaryMonth').oninput=render;
+$('prev').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()};
+$('next').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()};
+$('now').onclick=()=>{let d=new Date();view=new Date(d.getFullYear(),d.getMonth(),1);selected=d;selected.setHours(0,0,0,0);render()};
+
+$('theme').onclick=()=>{let dark=document.documentElement.dataset.theme!=='dark';document.documentElement.dataset.theme=dark?'dark':'light';$('theme').textContent=dark?'☀ מצב יום':'☾ מצב לילה';try{localStorage.setItem('shiftTheme',dark?'dark':'light')}catch(e){}};
+$('extraDate').value=key(new Date());toggleType();
+$('salaryMonth').value=monthKey(new Date());
+let saved=null;try{saved=localStorage.getItem('shiftTheme')}catch(e){}if(saved==='dark'){document.documentElement.dataset.theme='dark';$('theme').textContent='☀ מצב יום'}
+render();
+</script>
+</body></html>
