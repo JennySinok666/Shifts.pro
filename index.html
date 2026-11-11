@@ -74,7 +74,7 @@ h1{letter-spacing:-.4px}
 input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{width:auto;margin-inline-end:8px}
 .brow{display:grid;grid-template-columns:1.3fr .8fr auto auto auto;gap:6px;align-items:center;margin-bottom:7px}.brow button{padding:8px 11px}
 .seq{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}.seq span{min-width:30px;text-align:center;padding:5px 6px;border-radius:10px;font-size:13px;color:var(--daytext);border:1px solid var(--line)}.seq .morning{background:var(--morning)}.seq .night{background:var(--night)}.seq .off{background:var(--off)}
-.sheet .grid3{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sheet .row{margin-top:9px}
+.sheet .grid3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.sheet .grid3>*,.sheet .row>*{min-width:0}.sheet input[type=date],.sheet input[type=time],.sheet input[type=number],.sheet select{min-width:0;max-width:100%;width:100%;-webkit-appearance:none;appearance:none;display:block;min-height:44px;text-align:center}.sheet input[type=date],.sheet input[type=time]{text-align:center}.sheet input::-webkit-date-and-time-value{text-align:center;min-width:0}.sheet .row{margin-top:9px}
 </style>
 </head>
 <body>
@@ -163,14 +163,17 @@ input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{wi
 <h3>משמרת ושכר</h3>
 <div class="grid3"><div><label for="sLen">אורך משמרת (שעות)</label><input type="number" id="sLen" min="1" max="24" step="0.5" inputmode="decimal"></div><div><label for="sRate">שכר לשעה (₪)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div><div><label for="sP125">שעות נוספות ראשונות (%)</label><input type="number" id="sP125" min="100" step="1" inputmode="decimal"></div><div><label for="sP150">שעות נוספות נוספות (%)</label><input type="number" id="sP150" min="100" step="1" inputmode="decimal"></div></div>
 <p class="note" style="margin-top:8px">האחוזים משמשים כרגע לחישוב ימים ידניים. אחוזי לילה, שישי, שבת וחג יתווספו לפי החוזה.</p>
+<h3>שעות המשמרות</h3>
+<p class="note">שעות התחלה וסיום נפרדות לבוקר ולילה. הן משמשות לייצוא ליומן (לא קשורות לחגים). משמרת שמסתיימת אחרי חצות מסתיימת ביום שלמחרת.</p>
+<div class="grid3"><div><label for="sMStart">בוקר — התחלה</label><input type="time" id="sMStart"></div><div><label for="sMEnd">בוקר — סיום</label><input type="time" id="sMEnd"></div><div><label for="sNStart">לילה — התחלה</label><input type="time" id="sNStart"></div><div><label for="sNEnd">לילה — סיום</label><input type="time" id="sNEnd"></div></div>
 <h3>ייצוא ליומן</h3>
-<div class="grid3"><div><label for="sMStart">שעת התחלה — בוקר</label><input type="time" id="sMStart"></div><div><label for="sNStart">שעת התחלה — לילה</label><input type="time" id="sNStart"></div><div><label for="sIcsMonths">כמה חודשים קדימה</label><select id="sIcsMonths"><option value="3">3</option><option value="6">6</option><option value="12">12</option></select></div></div>
+<div class="row"><label for="sIcsMonths">כמה חודשים קדימה</label><select id="sIcsMonths"><option value="3">3</option><option value="6">6</option><option value="12">12</option></select></div>
 <label style="margin-top:10px;font-weight:normal"><input type="checkbox" id="sIcsHol" checked>כולל חגים</label>
 <button class="primary" id="exportIcs" style="width:100%;margin-top:6px">הורד קובץ יומן (ICS)</button>
 <p class="note">הקובץ מתחיל מהחודש המוצג בלוח. פתיחתו בטלפון תציע להוסיף את האירועים ליומן. זה ייצוא חד־כיווני, ושינוי עתידי דורש ייצוא מחדש.</p>
 <button id="resetAll" style="width:100%;margin-top:14px">אפס את כל ההגדרות</button>
 </section></div>
-<footer>גרסה 11 · הנתונים נשמרים במכשיר בלבד. אין צורך בחשבון משתמש.</footer>
+<footer>גרסה 12 · הנתונים נשמרים במכשיר בלבד. אין צורך בחשבון משתמש.</footer>
 </main>
 <script>
 const months=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],wd=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
@@ -273,7 +276,7 @@ $('extraDate').value=key(new Date());toggleType();
 $('salaryMonth').value=monthKey(new Date());
 let saved=null;try{saved=localStorage.getItem('shiftTheme')}catch(e){}if(saved==='dark'){document.documentElement.dataset.theme='dark';$('theme').textContent='☀ מצב יום'}
 
-const DEF={font:'system',size:1,cMorning:null,cNight:null,cOff:null,cHol:null,shiftLen:12,anchor:'2026-10-13',blocks:[{t:'בוקר',n:2},{t:'לילה',n:2},{t:'חופש',n:4}],rate:36,p125:125,p150:150,mStart:'07:00',nStart:'19:00',icsMonths:6,icsHol:true};
+const DEF={font:'system',size:1,cMorning:null,cNight:null,cOff:null,cHol:null,shiftLen:12,anchor:'2026-10-13',blocks:[{t:'בוקר',n:2},{t:'לילה',n:2},{t:'חופש',n:4}],rate:36,p125:125,p150:150,mStart:'07:00',mEnd:'19:00',nStart:'19:00',nEnd:'07:00',icsMonths:6,icsHol:true};
 let S=Object.assign({},DEF,safeLoad('shiftSettings',{}));
 if(!Array.isArray(S.blocks)||!S.blocks.length)S.blocks=JSON.parse(JSON.stringify(DEF.blocks));
 const FONTS={system:'-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif',rounded:'ui-rounded,"SF Pro Rounded",-apple-system,"Segoe UI",Arial,sans-serif',serif:'ui-serif,"New York",Georgia,"Times New Roman",serif',mono:'ui-monospace,"SF Mono",Menlo,Consolas,monospace'};
@@ -294,7 +297,7 @@ function fillSettings(){
 $('sFont').value=S.font;$('sSize').value=String(S.size);
 $('cMorning').value=S.cMorning||'#56aaff';$('cNight').value=S.cNight||'#aa80ff';$('cOff').value=S.cOff||'#50d28c';$('cHol').value=S.cHol||'#be123c';
 $('sAnchor').value=S.anchor;$('sLen').value=S.shiftLen;$('sRate').value=S.rate;$('sP125').value=S.p125;$('sP150').value=S.p150;
-$('sMStart').value=S.mStart;$('sNStart').value=S.nStart;$('sIcsMonths').value=String(S.icsMonths);$('sIcsHol').checked=!!S.icsHol;renderBlocks()}
+$('sMStart').value=S.mStart;$('sMEnd').value=S.mEnd;$('sNStart').value=S.nStart;$('sNEnd').value=S.nEnd;$('sIcsMonths').value=String(S.icsMonths);$('sIcsHol').checked=!!S.icsHol;renderBlocks()}
 function renderBlocks(){
 $('blockList').innerHTML=S.blocks.map((b,i)=>`<div class="brow"><select data-i="${i}" data-f="t" aria-label="סוג">${['בוקר','לילה','חופש'].map(t=>`<option${t===b.t?' selected':''}>${t}</option>`).join('')}</select><input type="number" min="1" max="30" value="${b.n}" data-i="${i}" data-f="n" aria-label="כמות ימים"><button data-up="${i}" aria-label="למעלה">↑</button><button data-dn="${i}" aria-label="למטה">↓</button><button data-rm="${i}" aria-label="מחק">✕</button></div>`).join('')}
 function changed(){saveS();applySettings();render()}
@@ -304,7 +307,7 @@ bind('sFont','font');bind('sSize','size',Number,'change');
 bind('sAnchor','anchor',v=>v||null);
 bind('sLen','shiftLen',v=>(Number(v)>0&&Number(v)<=24)?Number(v):null);bind('sRate','rate',v=>Number(v)>0?Number(v):null);
 bind('sP125','p125',v=>Number(v)>=100?Number(v):null);bind('sP150','p150',v=>Number(v)>=100?Number(v):null);
-bind('sMStart','mStart',v=>v||null);bind('sNStart','nStart',v=>v||null);bind('sIcsMonths','icsMonths',Number,'change');
+bind('sMStart','mStart',v=>v||null);bind('sMEnd','mEnd',v=>v||null);bind('sNStart','nStart',v=>v||null);bind('sNEnd','nEnd',v=>v||null);bind('sIcsMonths','icsMonths',Number,'change');
 $('sIcsHol').onchange=()=>{S.icsHol=$('sIcsHol').checked;saveS()};
 $('resetColors').onclick=()=>{S.cMorning=S.cNight=S.cOff=S.cHol=null;saveS();fillSettings();applySettings();render()};
 $('blockList').addEventListener('input',e=>{let t=e.target,i=Number(t.dataset.i);if(t.dataset.f==='n'){let n=Math.round(Number(t.value));if(n>=1&&n<=30){S.blocks[i].n=n;changed()}}});
@@ -330,7 +333,7 @@ let from=new Date(view.getFullYear(),view.getMonth(),1),to=new Date(view.getFull
 let L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Shifts Pro//HE','CALSCALE:GREGORIAN','X-WR-CALNAME:Shifts Pro'];
 for(let d=new Date(from);d<=to;d=addDays(d,1)){
 let s=shift(d);
-if(s==='בוקר'||s==='לילה'){let hm=(s==='בוקר'?S.mStart:S.nStart).split(':').map(Number),st=new Date(d.getFullYear(),d.getMonth(),d.getDate(),hm[0],hm[1]),en=new Date(st.getTime()+SHIFT_LEN*3600000);
+if(s==='בוקר'||s==='לילה'){let a=(s==='בוקר'?S.mStart:S.nStart).split(':').map(Number),z=(s==='בוקר'?S.mEnd:S.nEnd).split(':').map(Number),st=new Date(d.getFullYear(),d.getMonth(),d.getDate(),a[0],a[1]),en=new Date(d.getFullYear(),d.getMonth(),d.getDate(),z[0],z[1]);if(en<=st)en=new Date(en.getFullYear(),en.getMonth(),en.getDate()+1,z[0],z[1]);
 L.push('BEGIN:VEVENT',`UID:${icsDate(d)}-shift@shiftspro`,`DTSTAMP:${stamp}`,`DTSTART:${icsLocal(st)}`,`DTEND:${icsLocal(en)}`,`SUMMARY:${icsEsc('משמרת '+s)}`,'END:VEVENT')}
 if(S.icsHol){let h=holidayOf(d);if(h)L.push('BEGIN:VEVENT',`UID:${icsDate(d)}-hol@shiftspro`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${icsDate(d)}`,`DTEND;VALUE=DATE:${icsDate(addDays(d,1))}`,`SUMMARY:${icsEsc(h.n)}`,'TRANSP:TRANSPARENT','END:VEVENT')}}
 L.push('END:VCALENDAR');return L.join('\r\n')}
