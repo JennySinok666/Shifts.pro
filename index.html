@@ -67,10 +67,18 @@ input,select{border:1px solid var(--line);border-radius:16px;background:var(--so
 details summary{font-size:16px}
 .big{letter-spacing:-.3px}
 h1{letter-spacing:-.4px}
+
+.hbtns{display:flex;flex-direction:column;gap:6px;align-items:stretch}.hbtns button{padding:8px 13px;font-size:13px}
+.ov{position:fixed;inset:0;z-index:50;background:rgba(10,20,40,.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}.ov[hidden]{display:none}
+.sheet{max-width:620px;margin:8px auto 40px}.sheet h3{margin:18px 0 8px}.sheet .sh{display:flex;justify-content:space-between;align-items:center;gap:8px}.sheet .sh h2{margin:0;font-size:20px}
+input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{width:auto;margin-inline-end:8px}
+.brow{display:grid;grid-template-columns:1.3fr .8fr auto auto auto;gap:6px;align-items:center;margin-bottom:7px}.brow button{padding:8px 11px}
+.seq{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}.seq span{min-width:30px;text-align:center;padding:5px 6px;border-radius:10px;font-size:13px;color:var(--daytext);border:1px solid var(--line)}.seq .morning{background:var(--morning)}.seq .night{background:var(--night)}.seq .off{background:var(--off)}
+.sheet .grid3{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sheet .row{margin-top:9px}
 </style>
 </head>
 <body>
-<header><div class="top"><div><h1>לוח המשמרות שלי</h1><p>2 בוקר · 2 לילה · 4 ימי חופש — מחזור של 8 ימים</p></div><button class="icon" id="theme" aria-label="החלפת מצב תצוגה">☾ מצב לילה</button></div></header>
+<header><div class="top"><div><h1>לוח המשמרות שלי</h1><p id="cycleDesc"></p></div><div class="hbtns"><button class="icon" id="openSettings" aria-label="הגדרות">⚙ הגדרות</button><button class="icon" id="theme" aria-label="החלפת מצב תצוגה">☾ מצב לילה</button></div></div></header>
 <main>
 <section class="card">
 <div class="legend"><span class="pill morning">☀ בוקר</span><span class="pill night">☾ לילה</span><span class="pill off">✓ חופש</span></div>
@@ -103,7 +111,7 @@ h1{letter-spacing:-.4px}
 <div class="stat"><strong id="nightCount">—</strong><span>משמרות לילה</span></div>
 <div class="stat"><strong id="fridayCount">—</strong><span>משמרות שישי*</span></div>
 <div class="stat"><strong id="saturdayCount">—</strong><span>משמרות שבת*</span></div>
-<div class="stat"><strong id="periodHours">—</strong><span>שעות מתוכננות (12 למשמרת)</span></div>
+<div class="stat"><strong id="periodHours">—</strong><span id="hoursLabel">שעות מתוכננות</span></div>
 </div>
 <p class="note">* ספירת שישי ושבת היא לפי תאריך תחילת המשמרת, והיא חופפת לספירת בוקר/לילה. לדוגמה, משמרת לילה שמתחילה ביום שישי נספרת גם בלילה וגם בשישי.</p>
 <div id="actualSlipStats" style="display:none;margin-top:14px">
@@ -139,11 +147,34 @@ h1{letter-spacing:-.4px}
 </div>
 </details>
 </section>
-<footer>גרסה 10 · הנתונים נשמרים במכשיר בלבד. אין צורך בחשבון משתמש.</footer>
+<div class="ov" id="settingsOv" hidden><section class="card sheet" role="dialog" aria-label="הגדרות">
+<div class="sh"><h2>הגדרות</h2><button class="primary" id="closeSettings">סגור</button></div>
+<h3>מראה</h3>
+<div class="grid3"><div><label for="sFont">גופן</label><select id="sFont"><option value="system">מערכת (ברירת מחדל)</option><option value="rounded">עגול</option><option value="serif">סריף</option><option value="mono">מונוספייס</option></select></div><div><label for="sSize">גודל טקסט</label><select id="sSize"><option value="0.9">קטן</option><option value="1">רגיל</option><option value="1.12">גדול</option><option value="1.25">גדול מאוד</option></select></div></div>
+<h3>צבעים</h3>
+<div class="grid3"><div><label for="cMorning">בוקר</label><input type="color" id="cMorning"></div><div><label for="cNight">לילה</label><input type="color" id="cNight"></div><div><label for="cOff">חופש</label><input type="color" id="cOff"></div><div><label for="cHol">חגים</label><input type="color" id="cHol"></div></div>
+<button id="resetColors" style="margin-top:10px">אפס צבעים</button>
+<h3>מחזור המשמרות</h3>
+<p class="note">בנה את המחזור מבלוקים: בחר סוג וכמות ימים. הלוח מתעדכן מיד והמחזור חוזר על עצמו ברצף.</p>
+<div class="row"><label for="sAnchor">תאריך תחילת המחזור (היום הראשון בבלוק הראשון)</label><input type="date" id="sAnchor"></div>
+<div id="blockList" class="row"></div>
+<button id="addBlock" style="width:100%">＋ הוסף בלוק</button>
+<div class="seq" id="seqPreview"></div>
+<h3>משמרת ושכר</h3>
+<div class="grid3"><div><label for="sLen">אורך משמרת (שעות)</label><input type="number" id="sLen" min="1" max="24" step="0.5" inputmode="decimal"></div><div><label for="sRate">שכר לשעה (₪)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div><div><label for="sP125">שעות נוספות ראשונות (%)</label><input type="number" id="sP125" min="100" step="1" inputmode="decimal"></div><div><label for="sP150">שעות נוספות נוספות (%)</label><input type="number" id="sP150" min="100" step="1" inputmode="decimal"></div></div>
+<p class="note" style="margin-top:8px">האחוזים משמשים כרגע לחישוב ימים ידניים. אחוזי לילה, שישי, שבת וחג יתווספו לפי החוזה.</p>
+<h3>ייצוא ליומן</h3>
+<div class="grid3"><div><label for="sMStart">שעת התחלה — בוקר</label><input type="time" id="sMStart"></div><div><label for="sNStart">שעת התחלה — לילה</label><input type="time" id="sNStart"></div><div><label for="sIcsMonths">כמה חודשים קדימה</label><select id="sIcsMonths"><option value="3">3</option><option value="6">6</option><option value="12">12</option></select></div></div>
+<label style="margin-top:10px;font-weight:normal"><input type="checkbox" id="sIcsHol" checked>כולל חגים</label>
+<button class="primary" id="exportIcs" style="width:100%;margin-top:6px">הורד קובץ יומן (ICS)</button>
+<p class="note">הקובץ מתחיל מהחודש המוצג בלוח. פתיחתו בטלפון תציע להוסיף את האירועים ליומן. זה ייצוא חד־כיווני, ושינוי עתידי דורש ייצוא מחדש.</p>
+<button id="resetAll" style="width:100%;margin-top:14px">אפס את כל ההגדרות</button>
+</section></div>
+<footer>גרסה 11 · הנתונים נשמרים במכשיר בלבד. אין צורך בחשבון משתמש.</footer>
 </main>
 <script>
 const months=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],wd=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
-const names=['בוקר','בוקר','לילה','לילה','חופש','חופש','חופש','חופש'],cls={'בוקר':'morning','לילה':'night','חופש':'off'},symbols={'בוקר':'☀','לילה':'☾','חופש':'✓'};
+let names=['בוקר','בוקר','לילה','לילה','חופש','חופש','חופש','חופש'],cls={'בוקר':'morning','לילה':'night','חופש':'off'},symbols={'בוקר':'☀','לילה':'☾','חופש':'✓'};
 let view=new Date(),selected=new Date();view=new Date(view.getFullYear(),view.getMonth(),1);selected.setHours(0,0,0,0);
 const $=x=>document.getElementById(x);
 function parse(s){let a=s.split('-').map(Number);return new Date(a[0],a[1]-1,a[2])}
@@ -151,8 +182,8 @@ function key(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),S
 function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
 function dayNumber(d){return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000)}
 function diff(a,b){return dayNumber(a)-dayNumber(b)}
-const ANCHOR=new Date(2026,9,13);
-function shift(d){let n=diff(d,ANCHOR);return names[((n%8)+8)%8]}
+let ANCHOR=new Date(2026,9,13);
+function shift(d){let n=diff(d,ANCHOR),L=names.length;return names[((n%L)+L)%L]}
 function dateText(d){return `${d.getDate()} ב${months[d.getMonth()]} ${d.getFullYear()}`}
 function money(n){return new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS',maximumFractionDigits:0}).format(n)}
 function salaryPeriod(){let v=$('salaryMonth').value||monthKey(new Date()),a=v.split('-').map(Number),y=a[0],m=a[1]-1;return {start:new Date(y,m-1,24),end:new Date(y,m,23),mStart:new Date(y,m,1),mEnd:new Date(y,m+1,0),year:y,month:m}}
@@ -161,8 +192,8 @@ function safeSave(key,value){try{localStorage.setItem(key,JSON.stringify(value))
 let secondDays=safeLoad('extraWages',[]);if(!Array.isArray(secondDays))secondDays=[];
 let intelDays=safeLoad('intelExtras',[]);if(!Array.isArray(intelDays))intelDays=[];
 function saveAll(){safeSave('extraWages',secondDays);safeSave('intelExtras',intelDays)}
-const BASE=36;
-function autoGross(h){h=Number(h)||0;return Math.min(h,8)*BASE+Math.min(Math.max(h-8,0),2)*BASE*1.25+Math.max(h-10,0)*BASE*1.5}
+let BASE=36,SHIFT_LEN=12,P125=1.25,P150=1.5;
+function autoGross(h){h=Number(h)||0;return Math.min(h,8)*BASE+Math.min(Math.max(h-8,0),2)*BASE*P125+Math.max(h-10,0)*BASE*P150}
 function intelGrossOf(x){return Number.isFinite(Number(x.gross))&&x.gross!==null&&x.gross!==''&&Number(x.gross)>0?Number(x.gross):autoGross(x.hours)}
 function inRange(ds,a,b){let d=parse(ds);return d>=a&&d<=b}
 function entriesFor(ds){return {sec:secondDays.filter(x=>x.date===ds),int:intelDays.filter(x=>x.date===ds)}}
@@ -185,7 +216,7 @@ function holidayOf(d){let k=key(d);if(k in holCache)return holCache[k];let b=bas
 function cellText(h){let n=h.n;if(h.t==='ערב')return 'ע.חג '+n.replace('ערב ','');if(n.startsWith('חנוכה'))return 'חנוכה';if(n.startsWith('חול המועד'))return 'חוה״מ '+n.replace('חול המועד ','');return n.split(' / ')[0]}
 const holCls={'חג':'hol','ערב':'eve','מועד':'mod'};
 function holShiftText(d,h){let s=shift(d),t=(s==='בוקר'||s==='לילה')?'חל במשמרת '+s+' שלך':'חל ביום חופש שלך';if(h.t!=='מועד'&&((h.t==='חג'&&shift(addDays(d,-1))==='לילה')))t+=' · משמרת הלילה של אתמול נמשכת לתוך היום';if(h.t==='ערב'&&s==='לילה')t+=' · המשמרת נמשכת לתוך החג';return t}
-function updateHint(){let h=Number($('intelHours').value),g=Number($('intelGross').value);$('intelHint').textContent=h>0?(g>0?`ברוטו שהוזן: ${money(g)}`:`הערכה אוטומטית: ${money(autoGross(h))} ברוטו (8 שעות ראשונות ב־100%, שעתיים ב־125%, מעבר לכך 150% על בסיס ${BASE} ₪).`):''}
+function updateHint(){let h=Number($('intelHours').value),g=Number($('intelGross').value);$('intelHint').textContent=h>0?(g>0?`ברוטו שהוזן: ${money(g)}`:`הערכה אוטומטית: ${money(autoGross(h))} ברוטו (8 שעות ראשונות ב־100%, שעתיים ב־${Math.round(P125*100)}%, מעבר לכך ${Math.round(P150*100)}% על בסיס ${BASE} ₪).`):''}
 function render(){
 let y=view.getFullYear(),m=view.getMonth();$('title').textContent=months[m]+' '+y;let c=$('cal');c.innerHTML='';
 wd.forEach(x=>{let e=document.createElement('div');e.className='weekday';e.textContent=x;c.appendChild(e)});
@@ -194,9 +225,9 @@ for(let i=0;i<offset;i++){let e=document.createElement('div');e.className='day e
 for(let n=1;n<=count;n++){let d=new Date(y,m,n),s=shift(d),ds=key(d),en=entriesFor(ds),b=document.createElement('button');b.className='day '+(cls[s]||'before');if(ds===key(new Date()))b.classList.add('today');if(ds===key(selected))b.classList.add('selected');let num=document.createElement('span');num.className='num';num.textContent=n;b.appendChild(num);let kind=document.createElement('span');kind.className='kind';kind.textContent=s;b.appendChild(kind);let lab=dateText(d)+': '+s,hd=holidayOf(d),hn=null;if(hd){hn=document.createElement('span');hn.className='hname';hn.textContent=cellText(hd);lab+=', '+hd.n}if(hn)b.appendChild(hn);if(en.sec.length||en.int.length){b.classList.add('hasmarks');let mk=document.createElement('div');mk.className='marks';if(en.sec.length){mk.innerHTML+='<span class="mk sec">₪</span>';lab+=', עבודה שנייה'}if(en.int.length){mk.innerHTML+='<span class="mk int">+</span>';lab+=', תוספת אינטל'}b.appendChild(mk)}b.setAttribute('aria-label',lab);b.onclick=()=>{selected=d;$('extraDate').value=ds;render()};c.appendChild(b)}
 $('chosen').textContent=dateText(selected);let s=shift(selected),sel=entriesFor(key(selected)),hol=holidayOf(selected);
 $('detail').innerHTML='<div class="big">'+(symbols[s]||'')+' '+s+'</div>'+(s==='חופש'?(selected.getDay()===5||selected.getDay()===6?'יום חופש בסוף השבוע — לא משמרת עבודה קבועה.':'יום חופש בימי חול — אפשר להוסיף כאן שכר מהעבודה השנייה אם עבדת.'):'יום שמשויך למחזור העבודה הקבוע.')+(hol?`<div class="entry"><span class="mk hol" style="font-size:12px;padding:3px 8px">${hol.n}</span><span class="muted" style="text-align:end">${holShiftText(selected,hol)}</span></div>`:'')+sel.sec.map(x=>entryRow('sec',x)).join('')+sel.int.map(x=>entryRow('int',x)).join('');
-let p=salaryPeriod(),stats=countPeriod(p),hours=stats.total*12;
+let p=salaryPeriod(),stats=countPeriod(p),hours=stats.total*SHIFT_LEN;
 const payslip={gross:11542.32,net:10713.32,paidHours:199.68,baseRate:BASE};
-const grossPerHour=payslip.gross/payslip.paidHours;
+const grossPerHour=payslip.gross/payslip.paidHours*(BASE/36);
 const netRatio=payslip.net/payslip.gross;
 const shiftsGross=hours*grossPerHour;
 const intelRows=intelDays.filter(x=>inRange(x.date,p.start,p.end)).sort((a,b)=>a.date.localeCompare(b.date));
@@ -217,10 +248,10 @@ $('effectiveRate').textContent=money(grossPerHour);
 $('intelExtraTotal').textContent=money(manualGross);
 $('secondTotal').textContent=money(secondSum);
 $('grandNet').textContent=money(netEstimate+secondSum);
-$('estimateExplanation').textContent=`אינטל (${p.start.getDate()}.${p.start.getMonth()+1} עד ${p.end.getDate()}.${p.end.getMonth()+1}): ${stats.total} משמרות × 12 שעות = ${hours} שעות, ממוצע ברוטו ${grossPerHour.toFixed(2)} ₪ לשעה (תלוש אוקטובר), שיעור נטו ${(netRatio*100).toFixed(1)}%${intelRows.length?`, ועוד ${intelRows.length} ימים ידניים`:''}. עבודה שנייה: ${secRows.length} ימים בין ה־1 ל־${p.mEnd.getDate()} ב${months[p.month]}.`;
-$('periodShifts').textContent=stats.total;$('morningCount').textContent=stats.morning;$('nightCount').textContent=stats.night;$('fridayCount').textContent=stats.friday;$('saturdayCount').textContent=stats.saturday;$('periodHours').textContent=hours;
+$('estimateExplanation').textContent=`אינטל (${p.start.getDate()}.${p.start.getMonth()+1} עד ${p.end.getDate()}.${p.end.getMonth()+1}): ${stats.total} משמרות × ${SHIFT_LEN} שעות = ${hours} שעות, ממוצע ברוטו ${grossPerHour.toFixed(2)} ₪ לשעה (תלוש אוקטובר), שיעור נטו ${(netRatio*100).toFixed(1)}%${intelRows.length?`, ועוד ${intelRows.length} ימים ידניים`:''}. עבודה שנייה: ${secRows.length} ימים בין ה־1 ל־${p.mEnd.getDate()} ב${months[p.month]}.`;
+$('hoursLabel').textContent=`שעות מתוכננות (${SHIFT_LEN} למשמרת)`;$('periodShifts').textContent=stats.total;$('morningCount').textContent=stats.morning;$('nightCount').textContent=stats.night;$('fridayCount').textContent=stats.friday;$('saturdayCount').textContent=stats.saturday;$('periodHours').textContent=hours;
 $('salaryPeriodLabel').textContent=`אינטל: ${dateText(p.start)} עד ${dateText(p.end)}. עבודה שנייה: ${dateText(p.mStart)} עד ${dateText(p.mEnd)}.`;
-$('periodText').textContent=`בתקופת השכר של אינטל מתוכננות ${stats.total} משמרות: ${stats.morning} בוקר ו־${stats.night} לילה. מתוכן ${stats.friday} מתחילות ביום שישי ו־${stats.saturday} מתחילות בשבת. סך הכול ${hours} שעות לפי 12 שעות למשמרת.`;
+$('periodText').textContent=`בתקופת השכר של אינטל מתוכננות ${stats.total} משמרות: ${stats.morning} בוקר ו־${stats.night} לילה. מתוכן ${stats.friday} מתחילות ביום שישי ו־${stats.saturday} מתחילות בשבת. סך הכול ${hours} שעות לפי ${SHIFT_LEN} שעות למשמרת.`;
 $('actualSlipStats').style.display=(p.year===2026&&p.month===9)?'block':'none';
 let all=[...intelRows.map(x=>['int',x]),...secRows.map(x=>['sec',x])].sort((a,b)=>a[1].date.localeCompare(b[1].date));
 $('entryList').innerHTML=all.length?all.map(([t,x])=>entryRow(t,x)).join(''):'<span class="note">לא נוספו ימים בחודש השכר הזה.</span>';
@@ -241,6 +272,70 @@ $('theme').onclick=()=>{let dark=document.documentElement.dataset.theme!=='dark'
 $('extraDate').value=key(new Date());toggleType();
 $('salaryMonth').value=monthKey(new Date());
 let saved=null;try{saved=localStorage.getItem('shiftTheme')}catch(e){}if(saved==='dark'){document.documentElement.dataset.theme='dark';$('theme').textContent='☀ מצב יום'}
+
+const DEF={font:'system',size:1,cMorning:null,cNight:null,cOff:null,cHol:null,shiftLen:12,anchor:'2026-10-13',blocks:[{t:'בוקר',n:2},{t:'לילה',n:2},{t:'חופש',n:4}],rate:36,p125:125,p150:150,mStart:'07:00',nStart:'19:00',icsMonths:6,icsHol:true};
+let S=Object.assign({},DEF,safeLoad('shiftSettings',{}));
+if(!Array.isArray(S.blocks)||!S.blocks.length)S.blocks=JSON.parse(JSON.stringify(DEF.blocks));
+const FONTS={system:'-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif',rounded:'ui-rounded,"SF Pro Rounded",-apple-system,"Segoe UI",Arial,sans-serif',serif:'ui-serif,"New York",Georgia,"Times New Roman",serif',mono:'ui-monospace,"SF Mono",Menlo,Consolas,monospace'};
+const SYM={'בוקר':'☀','לילה':'☾','חופש':'✓'};
+function saveS(){safeSave('shiftSettings',S)}
+function rgba(hex,a){let n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`}
+function applySettings(){
+let r=document.documentElement.style;
+document.body.style.fontFamily=FONTS[S.font]||FONTS.system;document.body.style.zoom=S.size;
+[['--morning','cMorning'],['--night','cNight'],['--off','cOff']].forEach(([v,k])=>{if(S[k])r.setProperty(v,rgba(S[k],.55));else r.removeProperty(v)});
+let st=$('dynStyle');if(!st){st=document.createElement('style');st.id='dynStyle';document.head.appendChild(st)}
+st.textContent=S.cHol?`.hname,.mk.hol{background:${S.cHol}!important}`:'';
+names=[];S.blocks.forEach(b=>{for(let i=0;i<b.n;i++)names.push(b.t)});if(!names.length)names=['חופש'];
+ANCHOR=parse(S.anchor||DEF.anchor);BASE=Number(S.rate)||36;SHIFT_LEN=Number(S.shiftLen)||12;P125=(Number(S.p125)||125)/100;P150=(Number(S.p150)||150)/100;
+$('cycleDesc').textContent=S.blocks.map(b=>`${b.n} ${b.t==='חופש'?'ימי חופש':b.t}`).join(' · ')+` — מחזור של ${names.length} ימים`;
+let sp=$('seqPreview');if(sp)sp.innerHTML=names.map(n=>`<span class="${cls[n]}">${SYM[n]}</span>`).join('')}
+function fillSettings(){
+$('sFont').value=S.font;$('sSize').value=String(S.size);
+$('cMorning').value=S.cMorning||'#56aaff';$('cNight').value=S.cNight||'#aa80ff';$('cOff').value=S.cOff||'#50d28c';$('cHol').value=S.cHol||'#be123c';
+$('sAnchor').value=S.anchor;$('sLen').value=S.shiftLen;$('sRate').value=S.rate;$('sP125').value=S.p125;$('sP150').value=S.p150;
+$('sMStart').value=S.mStart;$('sNStart').value=S.nStart;$('sIcsMonths').value=String(S.icsMonths);$('sIcsHol').checked=!!S.icsHol;renderBlocks()}
+function renderBlocks(){
+$('blockList').innerHTML=S.blocks.map((b,i)=>`<div class="brow"><select data-i="${i}" data-f="t" aria-label="סוג">${['בוקר','לילה','חופש'].map(t=>`<option${t===b.t?' selected':''}>${t}</option>`).join('')}</select><input type="number" min="1" max="30" value="${b.n}" data-i="${i}" data-f="n" aria-label="כמות ימים"><button data-up="${i}" aria-label="למעלה">↑</button><button data-dn="${i}" aria-label="למטה">↓</button><button data-rm="${i}" aria-label="מחק">✕</button></div>`).join('')}
+function changed(){saveS();applySettings();render()}
+function bind(id,key,conv,ev){$(id).addEventListener(ev||'input',()=>{let v=$(id).value;if(conv)v=conv(v);if(v===null)return;S[key]=v;changed()})}
+bind('sFont','font');bind('sSize','size',Number,'change');
+['cMorning:cMorning','cNight:cNight','cOff:cOff','cHol:cHol'].forEach(x=>{let [id,k]=x.split(':');bind(id,k)});
+bind('sAnchor','anchor',v=>v||null);
+bind('sLen','shiftLen',v=>(Number(v)>0&&Number(v)<=24)?Number(v):null);bind('sRate','rate',v=>Number(v)>0?Number(v):null);
+bind('sP125','p125',v=>Number(v)>=100?Number(v):null);bind('sP150','p150',v=>Number(v)>=100?Number(v):null);
+bind('sMStart','mStart',v=>v||null);bind('sNStart','nStart',v=>v||null);bind('sIcsMonths','icsMonths',Number,'change');
+$('sIcsHol').onchange=()=>{S.icsHol=$('sIcsHol').checked;saveS()};
+$('resetColors').onclick=()=>{S.cMorning=S.cNight=S.cOff=S.cHol=null;saveS();fillSettings();applySettings();render()};
+$('blockList').addEventListener('input',e=>{let t=e.target,i=Number(t.dataset.i);if(t.dataset.f==='n'){let n=Math.round(Number(t.value));if(n>=1&&n<=30){S.blocks[i].n=n;changed()}}});
+$('blockList').addEventListener('change',e=>{let t=e.target,i=Number(t.dataset.i);if(t.dataset.f==='t'){S.blocks[i].t=t.value;changed()}});
+$('blockList').addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;let a=S.blocks;
+if(b.dataset.up!==undefined){let i=Number(b.dataset.up);if(i>0)[a[i-1],a[i]]=[a[i],a[i-1]]}
+else if(b.dataset.dn!==undefined){let i=Number(b.dataset.dn);if(i<a.length-1)[a[i+1],a[i]]=[a[i],a[i+1]]}
+else if(b.dataset.rm!==undefined){if(a.length>1)a.splice(Number(b.dataset.rm),1);else{alert('חייב להישאר לפחות בלוק אחד.');return}}
+renderBlocks();changed()});
+$('addBlock').onclick=()=>{S.blocks.push({t:'חופש',n:1});renderBlocks();changed()};
+$('resetAll').onclick=()=>{if(!confirm('לאפס את כל ההגדרות לברירת המחדל? הימים שהוספת לא יימחקו.'))return;S=JSON.parse(JSON.stringify(DEF));saveS();fillSettings();applySettings();render()};
+function openSettings(){fillSettings();$('settingsOv').hidden=false;document.body.style.overflow='hidden'}
+function closeSettings(){$('settingsOv').hidden=true;document.body.style.overflow=''}
+$('openSettings').onclick=openSettings;$('closeSettings').onclick=closeSettings;
+$('settingsOv').addEventListener('click',e=>{if(e.target===$('settingsOv'))closeSettings()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('settingsOv').hidden)closeSettings()});
+function pad(n){return String(n).padStart(2,'0')}
+function icsLocal(d){return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`}
+function icsDate(d){return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`}
+function icsEsc(t){return String(t).replace(/\\/g,'\\\\').replace(/;/g,'\;').replace(/,/g,'\\,')}
+function buildIcs(){
+let from=new Date(view.getFullYear(),view.getMonth(),1),to=new Date(view.getFullYear(),view.getMonth()+Number(S.icsMonths),0),stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+let L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Shifts Pro//HE','CALSCALE:GREGORIAN','X-WR-CALNAME:Shifts Pro'];
+for(let d=new Date(from);d<=to;d=addDays(d,1)){
+let s=shift(d);
+if(s==='בוקר'||s==='לילה'){let hm=(s==='בוקר'?S.mStart:S.nStart).split(':').map(Number),st=new Date(d.getFullYear(),d.getMonth(),d.getDate(),hm[0],hm[1]),en=new Date(st.getTime()+SHIFT_LEN*3600000);
+L.push('BEGIN:VEVENT',`UID:${icsDate(d)}-shift@shiftspro`,`DTSTAMP:${stamp}`,`DTSTART:${icsLocal(st)}`,`DTEND:${icsLocal(en)}`,`SUMMARY:${icsEsc('משמרת '+s)}`,'END:VEVENT')}
+if(S.icsHol){let h=holidayOf(d);if(h)L.push('BEGIN:VEVENT',`UID:${icsDate(d)}-hol@shiftspro`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${icsDate(d)}`,`DTEND;VALUE=DATE:${icsDate(addDays(d,1))}`,`SUMMARY:${icsEsc(h.n)}`,'TRANSP:TRANSPARENT','END:VEVENT')}}
+L.push('END:VCALENDAR');return L.join('\r\n')}
+$('exportIcs').onclick=()=>{let blob=new Blob([buildIcs()],{type:'text/calendar;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='shifts-pro.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)};
+applySettings();
 render();
 </script>
 </body></html>
