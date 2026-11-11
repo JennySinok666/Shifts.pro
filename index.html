@@ -75,6 +75,11 @@ input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{wi
 .brow{display:grid;grid-template-columns:1.3fr .8fr auto auto auto;gap:6px;align-items:center;margin-bottom:7px}.brow button{padding:8px 11px}
 .seq{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}.seq span{min-width:30px;text-align:center;padding:5px 6px;border-radius:10px;font-size:13px;color:var(--daytext);border:1px solid var(--line)}.seq .morning{background:var(--morning)}.seq .night{background:var(--night)}.seq .off{background:var(--off)}
 .sheet .grid3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.sheet .grid3>*,.sheet .row>*{min-width:0}.sheet input[type=date],.sheet input[type=time],.sheet input[type=number],.sheet select{min-width:0;max-width:100%;width:100%;-webkit-appearance:none;appearance:none;display:block;min-height:44px;text-align:center}.sheet input[type=date],.sheet input[type=time]{text-align:center}.sheet input::-webkit-date-and-time-value{text-align:center;min-width:0}.sheet .row{margin-top:9px}
+
+.authcard{max-width:400px;margin:12vh auto 0;text-align:center}.authcard h2{margin:0 0 4px;font-size:26px}.authcard .tabs{display:flex;gap:8px;margin:14px 0}.authcard .tabs button{flex:1}.authcard .tabs button.on{background:linear-gradient(180deg,rgba(80,170,255,.95),rgba(10,120,245,.92));color:#fff}
+.authcard input{margin-top:8px;text-align:start}.authcard .lnk{background:none;border:0;box-shadow:none;color:var(--accent);padding:8px;font-size:14px;text-decoration:underline;backdrop-filter:none;-webkit-backdrop-filter:none}
+#authMsg{min-height:20px;margin:10px 0 0;font-size:14px;color:#c4162a;font-weight:700}#authMsg.ok{color:#0f766e}
+#wizBanner{background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -114,19 +119,6 @@ input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{wi
 <div class="stat"><strong id="periodHours">—</strong><span id="hoursLabel">שעות מתוכננות</span></div>
 </div>
 <p class="note">* ספירת שישי ושבת היא לפי תאריך תחילת המשמרת, והיא חופפת לספירת בוקר/לילה. לדוגמה, משמרת לילה שמתחילה ביום שישי נספרת גם בלילה וגם בשישי.</p>
-<div id="actualSlipStats" style="display:none;margin-top:14px">
-<h3>נתוני תלוש בפועל — אוקטובר 2026</h3>
-<div class="stats">
-<div class="stat"><strong>₪11,542.32</strong><span>ברוטו בתלוש</span></div>
-<div class="stat"><strong>₪10,713.32</strong><span>נטו לתשלום</span></div>
-<div class="stat"><strong>17</strong><span>ימי עבודה בתלוש</span></div>
-<div class="stat"><strong>199.68</strong><span>שעות בתלוש</span></div>
-<div class="stat"><strong>₪829</strong><span>ניכויים</span></div>
-<div class="stat"><strong>₪36</strong><span>שכר בסיס לשעה</span></div>
-</div>
-<p class="note">בתלוש אוקטובר נכללו גם יום הדרכה ב־24.09.2026 (08:00–17:00) ויום חג בתשלום ב־03.10.2026. אלה ימים מיוחדים שאינם חלק ממחזור המשמרות הרגיל.</p>
-</div>
-
 <h3 style="margin-top:16px">תחזית שכר</h3>
 <div class="stats">
 <div class="stat"><strong id="grossEstimate">—</strong><span>ברוטו משוער</span></div>
@@ -147,8 +139,22 @@ input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{wi
 </div>
 </details>
 </section>
+<div class="ov" id="authOv" style="z-index:70"><section class="card authcard">
+<h2>Shifts Pro</h2><p class="note">לוח משמרות וחישוב שכר אישי</p>
+<div id="authLoading"><p class="note" id="authLoadTxt">טוען...</p><div id="authRetryRow" hidden><button class="primary" id="authRetry" style="width:100%">נסה שוב</button></div></div>
+<div id="authForm" hidden>
+<div class="tabs"><button id="tabIn" class="on" type="button">התחברות</button><button id="tabUp" type="button">הרשמה</button></div>
+<input id="authEmail" type="email" dir="ltr" autocomplete="email" inputmode="email" placeholder="אימייל">
+<input id="authPass" type="password" dir="ltr" autocomplete="current-password" placeholder="סיסמה (לפחות 6 תווים)">
+<button class="primary" id="authGo" type="button" style="width:100%;margin-top:12px">התחבר</button>
+<p id="authMsg" role="status"></p>
+<button class="lnk" id="authReset" type="button">שכחתי סיסמה</button>
+</div>
+<button class="lnk" id="authLocal" type="button">המשך בלי חשבון (נתונים במכשיר בלבד)</button>
+</section></div>
 <div class="ov" id="settingsOv" hidden><section class="card sheet" role="dialog" aria-label="הגדרות">
 <div class="sh"><h2>הגדרות</h2><button class="primary" id="closeSettings">סגור</button></div>
+<p id="wizBanner" hidden><b>ברוך הבא!</b> הגדר כאן את המחזור, אורך המשמרת והשכר שלך. אפשר לשנות הכול בהמשך, ולחץ "סיום" כשתסיים.</p>
 <h3>מראה</h3>
 <div class="grid3"><div><label for="sFont">גופן</label><select id="sFont"><option value="system">מערכת (ברירת מחדל)</option><option value="rounded">עגול</option><option value="serif">סריף</option><option value="mono">מונוספייס</option></select></div><div><label for="sSize">גודל טקסט</label><select id="sSize"><option value="0.9">קטן</option><option value="1">רגיל</option><option value="1.12">גדול</option><option value="1.25">גדול מאוד</option></select></div></div>
 <h3>צבעים</h3>
@@ -161,7 +167,8 @@ input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{wi
 <button id="addBlock" style="width:100%">＋ הוסף בלוק</button>
 <div class="seq" id="seqPreview"></div>
 <h3>משמרת ושכר</h3>
-<div class="grid3"><div><label for="sLen">אורך משמרת (שעות)</label><input type="number" id="sLen" min="1" max="24" step="0.5" inputmode="decimal"></div><div><label for="sRate">שכר לשעה (₪)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div><div><label for="sP125">שעות נוספות ראשונות (%)</label><input type="number" id="sP125" min="100" step="1" inputmode="decimal"></div><div><label for="sP150">שעות נוספות נוספות (%)</label><input type="number" id="sP150" min="100" step="1" inputmode="decimal"></div></div>
+<div class="grid3"><div><label for="sLen">אורך משמרת (שעות)</label><input type="number" id="sLen" min="1" max="24" step="0.5" inputmode="decimal"></div><div><label for="sRate">שכר לשעה (₪)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div><div><label for="sP125">שעות נוספות ראשונות (%)</label><input type="number" id="sP125" min="100" step="1" inputmode="decimal"></div><div><label for="sP150">שעות נוספות נוספות (%)</label><input type="number" id="sP150" min="100" step="1" inputmode="decimal"></div><div><label for="sAvg">ברוטו ממוצע לשעה (₪)</label><input type="number" id="sAvg" min="0" step="0.01" inputmode="decimal"></div><div><label for="sNet">נטו מתוך הברוטו (%)</label><input type="number" id="sNet" min="1" max="100" step="0.1" inputmode="decimal"></div></div>
+<p class="note" style="margin-top:8px">לתחזית מדויקת, חשב מהתלוש האחרון: ברוטו חלקי שעות בתלוש = ברוטו ממוצע לשעה, ונטו חלקי ברוטו = אחוז הנטו. בלי זה האפליקציה משתמשת בהערכה גסה (שכר לשעה × 1.5, ו־85% נטו).</p>
 <p class="note" style="margin-top:8px">האחוזים משמשים כרגע לחישוב ימים ידניים. אחוזי לילה, שישי, שבת וחג יתווספו לפי החוזה.</p>
 <h3>שעות המשמרות</h3>
 <p class="note">שעות התחלה וסיום נפרדות לבוקר ולילה. הן משמשות לייצוא ליומן (לא קשורות לחגים). משמרת שמסתיימת אחרי חצות מסתיימת ביום שלמחרת.</p>
@@ -171,9 +178,12 @@ input[type=color]{padding:3px;height:44px;cursor:pointer}input[type=checkbox]{wi
 <label style="margin-top:10px;font-weight:normal"><input type="checkbox" id="sIcsHol" checked>כולל חגים</label>
 <button class="primary" id="exportIcs" style="width:100%;margin-top:6px">הורד קובץ יומן (ICS)</button>
 <p class="note">הקובץ מתחיל מהחודש המוצג בלוח. פתיחתו בטלפון תציע להוסיף את האירועים ליומן. זה ייצוא חד־כיווני, ושינוי עתידי דורש ייצוא מחדש.</p>
+<h3>חשבון</h3>
+<p class="note" id="acctInfo"></p><p class="note" id="syncStatus"></p>
+<button id="signOutBtn" style="width:100%">התנתק</button>
 <button id="resetAll" style="width:100%;margin-top:14px">אפס את כל ההגדרות</button>
 </section></div>
-<footer>גרסה 12 · הנתונים נשמרים במכשיר בלבד. אין צורך בחשבון משתמש.</footer>
+<footer>גרסה 13 · הנתונים נשמרים בחשבון שלך (או במכשיר, אם בחרת להמשיך בלי חשבון).</footer>
 </main>
 <script>
 const months=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'],wd=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
@@ -194,7 +204,10 @@ function safeLoad(key,fallback){try{let value=localStorage.getItem(key);return v
 function safeSave(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){/* Storage may be unavailable; app remains usable for this session. */}}
 let secondDays=safeLoad('extraWages',[]);if(!Array.isArray(secondDays))secondDays=[];
 let intelDays=safeLoad('intelExtras',[]);if(!Array.isArray(intelDays))intelDays=[];
-function saveAll(){safeSave('extraWages',secondDays);safeSave('intelExtras',intelDays)}
+let UID=null,USER_EMAIL='',LOADED=false,PENDING=false,saveTimer=null,MODE='wait';
+function setSync(st){let e=$('syncStatus');if(!e)return;e.textContent=!UID?'':st==='saving'?'שומר...':st==='err'?'שגיאת שמירה. בדוק חיבור ונסה שוב.':'נשמר בענן ✓'}
+function persist(){if(MODE==='local'){safeSave('shiftSettings',S);safeSave('extraWages',secondDays);safeSave('intelExtras',intelDays);return}if(MODE!=='cloud'||!UID)return;if(!LOADED)return;PENDING=true;setSync('saving');clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{try{await window.cloud.save(UID,{settings:S,second:secondDays,intel:intelDays});PENDING=false;setSync('ok')}catch(e){PENDING=false;setSync('err')}},700)}
+function saveAll(){persist()}
 let BASE=36,SHIFT_LEN=12,P125=1.25,P150=1.5;
 function autoGross(h){h=Number(h)||0;return Math.min(h,8)*BASE+Math.min(Math.max(h-8,0),2)*BASE*P125+Math.max(h-10,0)*BASE*P150}
 function intelGrossOf(x){return Number.isFinite(Number(x.gross))&&x.gross!==null&&x.gross!==''&&Number(x.gross)>0?Number(x.gross):autoGross(x.hours)}
@@ -229,16 +242,15 @@ for(let n=1;n<=count;n++){let d=new Date(y,m,n),s=shift(d),ds=key(d),en=entriesF
 $('chosen').textContent=dateText(selected);let s=shift(selected),sel=entriesFor(key(selected)),hol=holidayOf(selected);
 $('detail').innerHTML='<div class="big">'+(symbols[s]||'')+' '+s+'</div>'+(s==='חופש'?(selected.getDay()===5||selected.getDay()===6?'יום חופש בסוף השבוע — לא משמרת עבודה קבועה.':'יום חופש בימי חול — אפשר להוסיף כאן שכר מהעבודה השנייה אם עבדת.'):'יום שמשויך למחזור העבודה הקבוע.')+(hol?`<div class="entry"><span class="mk hol" style="font-size:12px;padding:3px 8px">${hol.n}</span><span class="muted" style="text-align:end">${holShiftText(selected,hol)}</span></div>`:'')+sel.sec.map(x=>entryRow('sec',x)).join('')+sel.int.map(x=>entryRow('int',x)).join('');
 let p=salaryPeriod(),stats=countPeriod(p),hours=stats.total*SHIFT_LEN;
-const payslip={gross:11542.32,net:10713.32,paidHours:199.68,baseRate:BASE};
-const grossPerHour=payslip.gross/payslip.paidHours*(BASE/36);
-const netRatio=payslip.net/payslip.gross;
+const grossPerHour=Number(S.avgGross)>0?Number(S.avgGross):BASE*1.5;
+const netRatio=(Number(S.netPct)>0?Number(S.netPct):85)/100;
 const shiftsGross=hours*grossPerHour;
 const intelRows=intelDays.filter(x=>inRange(x.date,p.start,p.end)).sort((a,b)=>a.date.localeCompare(b.date));
 const secRows=secondDays.filter(x=>inRange(x.date,p.mStart,p.mEnd)).sort((a,b)=>a.date.localeCompare(b.date));
 const manualGross=intelRows.reduce((t,x)=>t+intelGrossOf(x),0);
 const secondSum=secRows.reduce((t,x)=>t+Number(x.amount||0),0);
 const grossEstimate=shiftsGross+manualGross;
-const baseEstimate=hours*payslip.baseRate;
+const baseEstimate=hours*BASE;
 const premiumEstimate=Math.max(0,shiftsGross-baseEstimate);
 const netEstimate=grossEstimate*netRatio;
 const deductionEstimate=grossEstimate-netEstimate;
@@ -251,11 +263,10 @@ $('effectiveRate').textContent=money(grossPerHour);
 $('intelExtraTotal').textContent=money(manualGross);
 $('secondTotal').textContent=money(secondSum);
 $('grandNet').textContent=money(netEstimate+secondSum);
-$('estimateExplanation').textContent=`אינטל (${p.start.getDate()}.${p.start.getMonth()+1} עד ${p.end.getDate()}.${p.end.getMonth()+1}): ${stats.total} משמרות × ${SHIFT_LEN} שעות = ${hours} שעות, ממוצע ברוטו ${grossPerHour.toFixed(2)} ₪ לשעה (תלוש אוקטובר), שיעור נטו ${(netRatio*100).toFixed(1)}%${intelRows.length?`, ועוד ${intelRows.length} ימים ידניים`:''}. עבודה שנייה: ${secRows.length} ימים בין ה־1 ל־${p.mEnd.getDate()} ב${months[p.month]}.`;
+$('estimateExplanation').textContent=`אינטל (${p.start.getDate()}.${p.start.getMonth()+1} עד ${p.end.getDate()}.${p.end.getMonth()+1}): ${stats.total} משמרות × ${SHIFT_LEN} שעות = ${hours} שעות, ממוצע ברוטו ${grossPerHour.toFixed(2)} ₪ לשעה (לפי ההגדרות), שיעור נטו ${(netRatio*100).toFixed(1)}%${intelRows.length?`, ועוד ${intelRows.length} ימים ידניים`:''}. עבודה שנייה: ${secRows.length} ימים בין ה־1 ל־${p.mEnd.getDate()} ב${months[p.month]}.`;
 $('hoursLabel').textContent=`שעות מתוכננות (${SHIFT_LEN} למשמרת)`;$('periodShifts').textContent=stats.total;$('morningCount').textContent=stats.morning;$('nightCount').textContent=stats.night;$('fridayCount').textContent=stats.friday;$('saturdayCount').textContent=stats.saturday;$('periodHours').textContent=hours;
 $('salaryPeriodLabel').textContent=`אינטל: ${dateText(p.start)} עד ${dateText(p.end)}. עבודה שנייה: ${dateText(p.mStart)} עד ${dateText(p.mEnd)}.`;
 $('periodText').textContent=`בתקופת השכר של אינטל מתוכננות ${stats.total} משמרות: ${stats.morning} בוקר ו־${stats.night} לילה. מתוכן ${stats.friday} מתחילות ביום שישי ו־${stats.saturday} מתחילות בשבת. סך הכול ${hours} שעות לפי ${SHIFT_LEN} שעות למשמרת.`;
-$('actualSlipStats').style.display=(p.year===2026&&p.month===9)?'block':'none';
 let all=[...intelRows.map(x=>['int',x]),...secRows.map(x=>['sec',x])].sort((a,b)=>a[1].date.localeCompare(b[1].date));
 $('entryList').innerHTML=all.length?all.map(([t,x])=>entryRow(t,x)).join(''):'<span class="note">לא נוספו ימים בחודש השכר הזה.</span>';
 }
@@ -276,12 +287,12 @@ $('extraDate').value=key(new Date());toggleType();
 $('salaryMonth').value=monthKey(new Date());
 let saved=null;try{saved=localStorage.getItem('shiftTheme')}catch(e){}if(saved==='dark'){document.documentElement.dataset.theme='dark';$('theme').textContent='☀ מצב יום'}
 
-const DEF={font:'system',size:1,cMorning:null,cNight:null,cOff:null,cHol:null,shiftLen:12,anchor:'2026-10-13',blocks:[{t:'בוקר',n:2},{t:'לילה',n:2},{t:'חופש',n:4}],rate:36,p125:125,p150:150,mStart:'07:00',mEnd:'19:00',nStart:'19:00',nEnd:'07:00',icsMonths:6,icsHol:true};
+const DEF={font:'system',size:1,cMorning:null,cNight:null,cOff:null,cHol:null,shiftLen:12,anchor:'2026-10-13',blocks:[{t:'בוקר',n:2},{t:'לילה',n:2},{t:'חופש',n:4}],rate:36,p125:125,p150:150,mStart:'07:00',mEnd:'19:00',nStart:'19:00',nEnd:'07:00',icsMonths:6,icsHol:true,avgGross:null,netPct:85,setupDone:false};
 let S=Object.assign({},DEF,safeLoad('shiftSettings',{}));
 if(!Array.isArray(S.blocks)||!S.blocks.length)S.blocks=JSON.parse(JSON.stringify(DEF.blocks));
 const FONTS={system:'-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif',rounded:'ui-rounded,"SF Pro Rounded",-apple-system,"Segoe UI",Arial,sans-serif',serif:'ui-serif,"New York",Georgia,"Times New Roman",serif',mono:'ui-monospace,"SF Mono",Menlo,Consolas,monospace'};
 const SYM={'בוקר':'☀','לילה':'☾','חופש':'✓'};
-function saveS(){safeSave('shiftSettings',S)}
+function saveS(){persist()}
 function rgba(hex,a){let n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`}
 function applySettings(){
 let r=document.documentElement.style;
@@ -296,7 +307,7 @@ let sp=$('seqPreview');if(sp)sp.innerHTML=names.map(n=>`<span class="${cls[n]}">
 function fillSettings(){
 $('sFont').value=S.font;$('sSize').value=String(S.size);
 $('cMorning').value=S.cMorning||'#56aaff';$('cNight').value=S.cNight||'#aa80ff';$('cOff').value=S.cOff||'#50d28c';$('cHol').value=S.cHol||'#be123c';
-$('sAnchor').value=S.anchor;$('sLen').value=S.shiftLen;$('sRate').value=S.rate;$('sP125').value=S.p125;$('sP150').value=S.p150;
+$('sAnchor').value=S.anchor;$('sLen').value=S.shiftLen;$('sRate').value=S.rate;$('sP125').value=S.p125;$('sP150').value=S.p150;$('sAvg').value=S.avgGross||'';$('sAvg').placeholder=String((Number(S.rate)||36)*1.5);$('sNet').value=S.netPct;
 $('sMStart').value=S.mStart;$('sMEnd').value=S.mEnd;$('sNStart').value=S.nStart;$('sNEnd').value=S.nEnd;$('sIcsMonths').value=String(S.icsMonths);$('sIcsHol').checked=!!S.icsHol;renderBlocks()}
 function renderBlocks(){
 $('blockList').innerHTML=S.blocks.map((b,i)=>`<div class="brow"><select data-i="${i}" data-f="t" aria-label="סוג">${['בוקר','לילה','חופש'].map(t=>`<option${t===b.t?' selected':''}>${t}</option>`).join('')}</select><input type="number" min="1" max="30" value="${b.n}" data-i="${i}" data-f="n" aria-label="כמות ימים"><button data-up="${i}" aria-label="למעלה">↑</button><button data-dn="${i}" aria-label="למטה">↓</button><button data-rm="${i}" aria-label="מחק">✕</button></div>`).join('')}
@@ -306,7 +317,7 @@ bind('sFont','font');bind('sSize','size',Number,'change');
 ['cMorning:cMorning','cNight:cNight','cOff:cOff','cHol:cHol'].forEach(x=>{let [id,k]=x.split(':');bind(id,k)});
 bind('sAnchor','anchor',v=>v||null);
 bind('sLen','shiftLen',v=>(Number(v)>0&&Number(v)<=24)?Number(v):null);bind('sRate','rate',v=>Number(v)>0?Number(v):null);
-bind('sP125','p125',v=>Number(v)>=100?Number(v):null);bind('sP150','p150',v=>Number(v)>=100?Number(v):null);
+bind('sAvg','avgGross',v=>Number(v)>0?Number(v):null);bind('sNet','netPct',v=>(Number(v)>0&&Number(v)<=100)?Number(v):null);bind('sP125','p125',v=>Number(v)>=100?Number(v):null);bind('sP150','p150',v=>Number(v)>=100?Number(v):null);
 bind('sMStart','mStart',v=>v||null);bind('sMEnd','mEnd',v=>v||null);bind('sNStart','nStart',v=>v||null);bind('sNEnd','nEnd',v=>v||null);bind('sIcsMonths','icsMonths',Number,'change');
 $('sIcsHol').onchange=()=>{S.icsHol=$('sIcsHol').checked;saveS()};
 $('resetColors').onclick=()=>{S.cMorning=S.cNight=S.cOff=S.cHol=null;saveS();fillSettings();applySettings();render()};
@@ -318,9 +329,9 @@ else if(b.dataset.dn!==undefined){let i=Number(b.dataset.dn);if(i<a.length-1)[a[
 else if(b.dataset.rm!==undefined){if(a.length>1)a.splice(Number(b.dataset.rm),1);else{alert('חייב להישאר לפחות בלוק אחד.');return}}
 renderBlocks();changed()});
 $('addBlock').onclick=()=>{S.blocks.push({t:'חופש',n:1});renderBlocks();changed()};
-$('resetAll').onclick=()=>{if(!confirm('לאפס את כל ההגדרות לברירת המחדל? הימים שהוספת לא יימחקו.'))return;S=JSON.parse(JSON.stringify(DEF));saveS();fillSettings();applySettings();render()};
-function openSettings(){fillSettings();$('settingsOv').hidden=false;document.body.style.overflow='hidden'}
-function closeSettings(){$('settingsOv').hidden=true;document.body.style.overflow=''}
+$('resetAll').onclick=()=>{if(!confirm('לאפס את כל ההגדרות לברירת המחדל? הימים שהוספת לא יימחקו.'))return;S=JSON.parse(JSON.stringify(DEF));S.setupDone=true;saveS();fillSettings();applySettings();render()};
+function openSettings(){fillSettings();let wiz=!S.setupDone;$('wizBanner').hidden=!wiz;$('closeSettings').textContent=wiz?'סיום':'סגור';updateAcct();$('settingsOv').hidden=false;document.body.style.overflow='hidden'}
+function closeSettings(){if(!S.setupDone){S.setupDone=true;persist()}$('settingsOv').hidden=true;document.body.style.overflow=''}
 $('openSettings').onclick=openSettings;$('closeSettings').onclick=closeSettings;
 $('settingsOv').addEventListener('click',e=>{if(e.target===$('settingsOv'))closeSettings()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('settingsOv').hidden)closeSettings()});
@@ -339,6 +350,55 @@ if(S.icsHol){let h=holidayOf(d);if(h)L.push('BEGIN:VEVENT',`UID:${icsDate(d)}-ho
 L.push('END:VCALENDAR');return L.join('\r\n')}
 $('exportIcs').onclick=()=>{let blob=new Blob([buildIcs()],{type:'text/calendar;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='shifts-pro.ics';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)};
 applySettings();
+
+function updateAcct(){let a=$('acctInfo'),b=$('signOutBtn');if(!a)return;if(UID){a.textContent='מחובר כ־'+USER_EMAIL;b.textContent='התנתק'}else{a.textContent='מצב מקומי: הנתונים נשמרים במכשיר הזה בלבד.';b.textContent='התחברות / הרשמה'}setSync('ok')}
+function authShow(mode,msg){$('authOv').hidden=false;document.body.style.overflow='hidden';$('authLoading').hidden=mode!=='loading'&&mode!=='error';$('authForm').hidden=mode!=='form';$('authRetryRow').hidden=mode!=='error';if(msg)$('authLoadTxt').textContent=msg;if(mode==='form'){$('authMsg').textContent='';$('authMsg').className=''}}
+function authHide(){$('authOv').hidden=true;document.body.style.overflow=''}
+function authErr(e){let c=(e&&e.code)||'';return c.includes('invalid-credential')||c.includes('wrong-password')||c.includes('user-not-found')?'אימייל או סיסמה שגויים.':c.includes('email-already')?'כבר קיים חשבון עם האימייל הזה. עבור להתחברות.':c.includes('weak-password')?'הסיסמה חלשה מדי (לפחות 6 תווים).':c.includes('invalid-email')?'כתובת האימייל לא תקינה.':c.includes('too-many')?'יותר מדי ניסיונות. נסה שוב בעוד כמה דקות.':c.includes('network')?'אין חיבור לאינטרנט או שהשירות חסום ברשת הזאת.':'משהו השתבש. נסה שוב.'}
+let authMode='in';
+function setAuthMode(m){authMode=m;$('tabIn').classList.toggle('on',m==='in');$('tabUp').classList.toggle('on',m==='up');$('authGo').textContent=m==='in'?'התחבר':'צור חשבון';$('authPass').autocomplete=m==='in'?'current-password':'new-password';$('authMsg').textContent=''}
+$('tabIn').onclick=()=>setAuthMode('in');$('tabUp').onclick=()=>setAuthMode('up');
+$('authGo').onclick=async()=>{let e=$('authEmail').value.trim(),p=$('authPass').value,m=$('authMsg');m.className='';
+if(!e||!p){m.textContent='יש למלא אימייל וסיסמה.';return}
+if(authMode==='up'&&p.length<6){m.textContent='הסיסמה חייבת להכיל לפחות 6 תווים.';return}
+$('authGo').disabled=true;try{if(authMode==='in')await window.cloud.signIn(e,p);else await window.cloud.signUp(e,p)}catch(x){m.textContent=authErr(x)}finally{$('authGo').disabled=false}};
+$('authReset').onclick=async()=>{let e=$('authEmail').value.trim(),m=$('authMsg');if(!e){m.className='';m.textContent='הזן אימייל ואז לחץ שוב.';return}try{await window.cloud.reset(e);m.className='ok';m.textContent='נשלח מייל לאיפוס סיסמה (בדוק גם בספאם).'}catch(x){m.className='';m.textContent=authErr(x)}};
+$('authLocal').onclick=()=>{UID=null;LOADED=false;MODE='local';loadLocal();authHide();applySettings();render();if(!S.setupDone&&!localData())openSettings()};
+$('authRetry').onclick=()=>location.reload();
+$('signOutBtn').onclick=async()=>{if(UID){if(!confirm('להתנתק?'))return;try{await window.cloud.signOut()}catch(e){}$('settingsOv').hidden=true}else{$('settingsOv').hidden=true;if(window.cloud){MODE='wait';authShow('form')}else authShow('error','השירות לא זמין כרגע.')}};
+function loadLocal(){S=Object.assign({},DEF,safeLoad('shiftSettings',{}));if(!Array.isArray(S.blocks)||!S.blocks.length)S.blocks=JSON.parse(JSON.stringify(DEF.blocks));let a=safeLoad('extraWages',[]),b=safeLoad('intelExtras',[]);secondDays=Array.isArray(a)?a:[];intelDays=Array.isArray(b)?b:[]}
+function freshState(anchorToday){S=JSON.parse(JSON.stringify(DEF));if(anchorToday)S.anchor=key(new Date());secondDays=[];intelDays=[]}
+function adopt(d){S=Object.assign({},DEF,JSON.parse(JSON.stringify(d.settings||{})));if(!Array.isArray(S.blocks)||!S.blocks.length)S.blocks=JSON.parse(JSON.stringify(DEF.blocks));secondDays=Array.isArray(d.second)?d.second:[];intelDays=Array.isArray(d.intel)?d.intel:[]}
+function localData(){let st=safeLoad('shiftSettings',null),a=safeLoad('extraWages',[]),b=safeLoad('intelExtras',[]);let has=(st&&typeof st==='object'&&Object.keys(st).length)||(Array.isArray(a)&&a.length)||(Array.isArray(b)&&b.length);return has?{settings:(st&&typeof st==='object')?st:{},second:Array.isArray(a)?a:[],intel:Array.isArray(b)?b:[]}:null}
+function clearLocal(){['shiftSettings','extraWages','intelExtras'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}})}
+async function handleUser(u){
+if(!u){UID=null;LOADED=false;MODE='wait';USER_EMAIL='';freshState(false);applySettings();render();setAuthMode('in');authShow('form');return}
+UID=u.uid;MODE='cloud';USER_EMAIL=u.email||'';LOADED=false;authShow('loading','טוען את הנתונים שלך...');
+try{let d=await window.cloud.load(UID),isNew=false;
+if(d)adopt(d);else{isNew=true;let loc=localData();
+if(loc&&confirm('נמצאו נתונים שנשמרו במכשיר הזה בגרסה ללא חשבון. לייבא אותם לחשבון?')){adopt(loc);S.setupDone=true;clearLocal()}else freshState(true)}
+LOADED=true;if(isNew)persist();authHide();applySettings();render();setSync('ok');if(!S.setupDone)openSettings()
+}catch(e){authShow('error','לא ניתן לטעון את הנתונים. בדוק חיבור לאינטרנט ונסה שוב.')}}
+document.addEventListener('visibilitychange',async()=>{if(document.visibilityState!=='visible'||!UID||!LOADED||PENDING||!$('settingsOv').hidden)return;try{let d=await window.cloud.load(UID);if(d&&!PENDING&&$('settingsOv').hidden){adopt(d);applySettings();render()}}catch(e){}});
+let authWait=0;(function initAuth(){if(window.cloud){window.cloud.onUser(handleUser)}else if(window.cloudFailed||authWait>60){authShow('error','לא ניתן להתחבר לשירות. ייתכן שאין חיבור לאינטרנט או שהשירות חסום ברשת הזאת.')}else{authWait++;setTimeout(initAuth,200)}})();
 render();
 </script>
+<script type="module">
+try{
+const B='https://www.gstatic.com/firebasejs/10.14.1/';
+const [A,Au,Fs]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]);
+const app=A.initializeApp({apiKey:"AIzaSyBRoRse9arWlwemfxntO-EKoQoNfiodnFY",authDomain:"shifts-pro.firebaseapp.com",projectId:"shifts-pro",storageBucket:"shifts-pro.firebasestorage.app",messagingSenderId:"496555018326",appId:"1:496555018326:web:f2c0167ae9fc2910d713f7"});
+const auth=Au.getAuth(app);
+let db;try{db=Fs.initializeFirestore(app,{localCache:Fs.persistentLocalCache({tabManager:Fs.persistentMultipleTabManager()})})}catch(e){db=Fs.getFirestore(app)}
+window.cloud={
+onUser:cb=>Au.onAuthStateChanged(auth,u=>cb(u?{uid:u.uid,email:u.email}:null)),
+signIn:(e,p)=>Au.signInWithEmailAndPassword(auth,e,p),
+signUp:(e,p)=>Au.createUserWithEmailAndPassword(auth,e,p),
+reset:e=>Au.sendPasswordResetEmail(auth,e),
+signOut:()=>Au.signOut(auth),
+load:async uid=>{const sn=await Fs.getDoc(Fs.doc(db,'users',uid));return sn.exists()?sn.data():null},
+save:(uid,d)=>Fs.setDoc(Fs.doc(db,'users',uid),Object.assign({},d,{updatedAt:Date.now()}))};
+}catch(e){console.error('Firebase load failed',e);window.cloudFailed=true}
+</script>
+
 </body></html>
