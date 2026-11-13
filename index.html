@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#cfe0ff">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Shifts Pro">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -483,4 +484,5 @@ save:(uid,d)=>Fs.setDoc(Fs.doc(db,'users',uid),Object.assign({},d,{updatedAt:Dat
 }catch(e){console.error('Firebase load failed',e);window.cloudFailed=true}
 </script>
 
+<script>if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}</script>
 </body></html>
