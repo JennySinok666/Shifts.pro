@@ -99,7 +99,7 @@ input[type=date]::-webkit-datetime-edit,input[type=month]::-webkit-datetime-edit
 html.native body{-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}html.native input,html.native textarea,html.native select{-webkit-user-select:text;user-select:text}
 html.native body{padding-top:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px));padding-bottom:max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px))}html.native .ov{padding-top:calc(12px + max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px)));padding-bottom:calc(12px + max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px)))}
 html[data-fw] body,html[data-fw] input,html[data-fw] select,html[data-fw] textarea,html[data-fw] label,html[data-fw] .note{font-weight:var(--fw)}html[data-fi] body,html[data-fi] input,html[data-fi] select,html[data-fi] textarea,html[data-fi] button{font-style:italic}
-.pkb{cursor:pointer;text-align:center;direction:ltr;width:100%;min-height:44px;display:block}.pkb.dis{opacity:.85;pointer-events:none}.pkov{position:fixed;inset:0;z-index:200;background:rgba(10,20,40,.35);display:flex;align-items:center;justify-content:center;padding:16px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}.pkcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;width:min(340px,100%);box-shadow:0 20px 60px rgba(0,0,0,.3)}.pkrow{display:flex;align-items:center;gap:6px;direction:ltr}.pkrow select{flex:1 1 0;min-width:0;padding:12px 4px;text-align:center;text-align-last:center;font-size:18px}.pkrow i{font-style:normal;opacity:.6;font-size:18px}.pkact{display:flex;gap:10px;margin-top:16px}.pkact button{flex:1;padding:12px;border-radius:14px}
+.pkw{position:relative;display:block;min-width:0}.pkb{cursor:pointer;text-align:center;direction:ltr;width:100%;min-height:44px;display:block}.pkb.dis{opacity:.85}.pkw>.pkn{position:absolute;inset:0;width:100%;height:100%!important;opacity:0!important;margin:0;z-index:1;font-size:16px}.pkw>.pkn.tfrom,.pkw>.pkn:disabled{pointer-events:none}
 </style>
 </head>
 <body>
@@ -504,37 +504,15 @@ function show(kind,v){if(!v)return '';
  if(kind==='time')return fmtTime(v);
  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);if(!m)return v;const y=m[1].slice(2),f=dfm();
  return f==='mdy'?m[2]+'/'+m[3]+'/'+y:f==='ymd'?y+'/'+m[2]+'/'+m[3]:m[3]+'/'+m[2]+'/'+y}
-function openPicker(inp,kind){
- const v=inp._v||'',ov=document.createElement('div');ov.className='pkov';
- const card=document.createElement('div');card.className='pkcard';const row=document.createElement('div');row.className='pkrow';
- const I=ch=>{const c=document.createElement('i');c.textContent=ch;return c};let read;
- if(kind==='time'){
-  const m=/^(\d{1,2}):(\d{2})/.exec(v),H=m?+m[1]:8,M=m?+m[2]:0,tw=tf()==='12';
-  const hs=sel(tw?rng(1,12,i=>String(i)):rng(0,23),tw?(H%12||12):H),ms=sel(rng(0,59),M),as=tw?sel([['AM','AM'],['PM','PM']],H>=12?'PM':'AM'):null;
-  row.append(hs,I(':'),ms);if(as)row.append(as);
-  read=()=>{let h=+hs.value;if(tw)h=(h%12)+(as.value==='PM'?12:0);return pad(h)+':'+pad(+ms.value)}
- }else{
-  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v),n=new Date(),Y=m?+m[1]:n.getFullYear(),Mo=m?+m[2]:n.getMonth()+1,D=m?+m[3]:n.getDate(),cy=n.getFullYear();
-  const ds=sel(rng(1,31),D),ms=sel(rng(1,12),Mo),ys=sel(rng(Math.min(cy-3,Y),Math.max(cy+12,Y),String),Y);
-  const o={dmy:[ds,ms,ys],mdy:[ms,ds,ys],ymd:[ys,ms,ds]}[dfm()];o.forEach((e,i)=>{if(i)row.append(I('/'));row.append(e)});
-  read=()=>{const y=+ys.value,mo=+ms.value,d=Math.min(+ds.value,new Date(y,mo,0).getDate());return y+'-'+pad(mo)+'-'+pad(d)}
- }
- const act=document.createElement('div');act.className='pkact';
- const ok=document.createElement('button');ok.type='button';ok.className='primary';ok.textContent=TX('אישור');
- const cn=document.createElement('button');cn.type='button';cn.textContent=TX('ביטול');
- act.append(cn,ok);card.append(row,act);ov.append(card);document.body.append(ov);
- const close=()=>ov.remove();cn.onclick=close;ov.addEventListener('click',e=>{if(e.target===ov)close()});
- ok.onclick=()=>{const nv=read();close();inp._set(nv)};
-}
 function upgrade(inp,dis){
- if(inp._pk)return;inp._pk=1;const kind=inp.type==='date'?'date':'time';const init=inp.value||inp.getAttribute('value')||'';
- const cls=inp.className;inp.type='hidden';inp._v=init;
- Object.defineProperty(inp,'value',{configurable:true,get(){return this._v},set(x){this._v=x==null?'':String(x);paint()}});
- const box=document.createElement('input');box.type='text';box.readOnly=true;box.setAttribute('inputmode','none');box.className=(cls?cls+' ':'')+'pkb'+(dis?' dis':'');
- inp.insertAdjacentElement('afterend',box);
- inp._set=nv=>{inp._v=nv;paint();inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}))};
- if(!dis)box.addEventListener('click',()=>openPicker(inp,kind));
- function paint(){box.value=show(kind,inp._v)}
+ if(inp._pk)return;inp._pk=1;const kind=inp.type==='date'?'date':'time';const cls=inp.className;
+ const wrap=document.createElement('span');wrap.className='pkw';inp.parentNode.insertBefore(wrap,inp);
+ const box=document.createElement('input');box.type='text';box.readOnly=true;box.tabIndex=-1;box.setAttribute('aria-hidden','true');box.className=(cls?cls+' ':'')+'pkb'+(dis?' dis':'');
+ wrap.append(box,inp);inp.classList.add('pkn');inp.setAttribute('lang',kind==='time'?'he-IL':'he-IL');
+ const d=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
+ Object.defineProperty(inp,'value',{configurable:true,get(){return d.get.call(this)},set(x){d.set.call(this,x);paint()}});
+ function paint(){box.value=show(kind,d.get.call(inp))}
+ inp.addEventListener('input',paint);inp.addEventListener('change',paint);
  inp._paint=paint;PK.push(inp);paint();
 }
 let last=tf()+dfm();
