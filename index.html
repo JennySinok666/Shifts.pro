@@ -283,7 +283,6 @@ html:root[data-skin]:not(.x) .hbtns button,html:root[data-skin]:not(.x) .pill,
 html:root[data-skin]:not(.x) .skins button{border-radius:18px}
 html:root[data-skin]:not(.x) .skins .sw{border-radius:12px}
 html:root[data-skin]:not(.x) input,html:root[data-skin]:not(.x) select,html:root[data-skin]:not(.x) #dayNote,html:root[data-skin]:not(.x) .stat,html:root[data-skin]:not(.x) #wizBanner,html:root[data-skin]:not(.x) .skinbox{border-radius:18px}
-html:root[data-skin]:not(.x) .cal .day.today,html:root[data-skin]:not(.x) .cal .day.selected{border-radius:22px}
 
 /* ===== Distinct personalities ===== */
 .skins [data-skin=ledger] .sw{background:repeating-linear-gradient(0deg,#fff 0 5px,#dfe4ee 5px 6px)}
@@ -383,6 +382,12 @@ html:root[data-skin="neon"]:not(.x) .card,html:root[data-skin="neon"]:not(.x) .o
 html:root[data-skin="neon"]:not(.x)[data-theme="dark"] .card,html:root[data-skin="neon"]:not(.x)[data-theme="dark"] main>.card.calpanel,html:root[data-skin="neon"]:not(.x)[data-theme="dark"] header{outline-color:rgba(92,242,214,.28)}
 html:root[data-skin="neon"]:not(.x) .ov .card{outline:0}
 html:root[data-skin="neon"]:not(.x) .cal .day{border-radius:16px 16px 4px 16px}
+
+/* selected day keeps the skin shape, framed in skin style */
+html:root[data-skin="ledger"]:not(.x) .cal .day.selected{box-shadow:inset 0 -5px 0 var(--bar),0 0 0 2.5px var(--ink)}
+html:root[data-skin="soft"]:not(.x) .cal .day.selected{box-shadow:0 0 0 3px var(--accent),var(--day-sh)}
+html:root[data-skin="bold"]:not(.x) .cal .day.selected{box-shadow:0 0 0 3.5px var(--accent),6px 6px 0 #000}
+html:root[data-skin="bold"]:not(.x)[data-theme="dark"] .cal .day.selected{box-shadow:0 0 0 3.5px var(--accent),6px 6px 0 #f4f4f4}
 </style>
 </head>
 <body>
