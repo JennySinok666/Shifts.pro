@@ -407,6 +407,10 @@ html:root[data-skin="bold"]:not(.x) .cal .day{padding-inline:0;border-width:2px;
 html:root[data-skin="bold"]:not(.x) .cal .day .kind{font-size:10.5px;padding:0;letter-spacing:-.2px;max-width:none;text-overflow:clip;overflow:visible}
 
 html:root[data-skin="bold"]:not(.x)[data-theme="dark"] header button,html:root[data-skin="bold"]:not(.x)[data-theme="dark"] .hbtns button{color:#fff;background:#262626;border-color:#000}
+
+/* holiday labels: let cells grow instead of clipping */
+html:root[data-skin] .cal .day{height:auto;min-height:74px;overflow:visible}
+html:root[data-skin] .cal .day .hname{-webkit-line-clamp:3;overflow:hidden;padding:2px 4px}
 </style>
 </head>
 <body>
