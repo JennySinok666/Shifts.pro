@@ -323,17 +323,22 @@ html:root[data-skin="bold"] button.primary{color:#000;border:3px solid #000}
 html:root[data-skin="bold"] .cal .day.today{outline:3px dashed var(--accent);outline-offset:2px}
 
 /* --- Neon: always-dark arcade --- */
-html:root[data-skin="neon"],html:root[data-skin="neon"][data-theme]{color-scheme:dark;--bg:#05060F;--card:rgba(10,12,34,.82);--soft:rgba(30,34,84,.55);--line:rgba(92,242,214,.40);--bd:rgba(92,242,214,.55);--line2:rgba(92,242,214,.40);--ink:#E8FBFF;--muted:#8fa3d8;--accent:#5CF2D6;--accent-ink:#031316;--morning:#3B82FF;--night:#B05CFF;--off:#22E3A0;--leave:#FFD60A;--other:#FF3DA5;--daytext:#031016;--bar:transparent;--sh:0 0 0 1px rgba(92,242,214,.18),0 0 26px rgba(92,242,214,.20);--btn-sh:0 0 10px rgba(92,242,214,.28);--day-sh:0 0 14px rgba(92,242,214,.40);--pbg:linear-gradient(135deg,#5CF2D6,#38BDF8);--psh:0 0 22px rgba(92,242,214,.65);--hero-bg:linear-gradient(135deg,#14143f,#3a1c7a);--hero-fg:#fff;--day-bd:1.5px solid rgba(255,255,255,.55)}
-html:root[data-skin="neon"] body::before{display:block;content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(92,242,214,.07) 1px,transparent 1px) 0 0/34px 34px,linear-gradient(90deg,rgba(92,242,214,.07) 1px,transparent 1px) 0 0/34px 34px,radial-gradient(60vmax 40vmax at 100% 0,rgba(176,92,255,.30),transparent 60%),radial-gradient(50vmax 40vmax at 0 100%,rgba(59,130,255,.28),transparent 60%),#05060F}
-html:root[data-skin="neon"] h1,html:root[data-skin="neon"] h2,html:root[data-skin="neon"] h3{color:#E8FBFF;text-shadow:0 0 12px rgba(92,242,214,.55)}
+html:root[data-skin="neon"]{--bg:#F3EFFF;--card:rgba(255,255,255,.92);--soft:#EFE9FF;--line:rgba(122,60,255,.40);--line2:rgba(122,60,255,.40);--bd:#7A3CFF;--ink:#1A1040;--muted:#6a5c9a;--accent:#7A3CFF;--accent-ink:#fff;--morning:#6FA0FF;--night:#C08BFF;--off:#5CF2C0;--leave:#FFE066;--other:#FF7CC4;--daytext:#1A1040;--bar:transparent;--sh:0 0 0 1px rgba(122,60,255,.15),0 6px 26px rgba(122,60,255,.25);--btn-sh:0 0 10px rgba(122,60,255,.25);--day-sh:0 0 10px rgba(122,60,255,.35);--day-bd:1.5px solid rgba(122,60,255,.55);--pbg:linear-gradient(135deg,#8B4DFF,#FF3DA5);--psh:0 0 18px rgba(139,77,255,.55);--hero-bg:linear-gradient(135deg,#7A3CFF,#FF3DA5);--hero-fg:#fff}
+html:root[data-skin="neon"] body::before{display:block;content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(122,60,255,.08) 1px,transparent 1px) 0 0/34px 34px,linear-gradient(90deg,rgba(122,60,255,.08) 1px,transparent 1px) 0 0/34px 34px,radial-gradient(55vmax 40vmax at 100% 0,rgba(255,61,165,.22),transparent 60%),radial-gradient(50vmax 40vmax at 0 100%,rgba(56,189,248,.25),transparent 60%),#F3EFFF}
+html:root[data-skin="neon"][data-theme="dark"]{color-scheme:dark;--bg:#05060F;--card:rgba(10,12,34,.82);--soft:rgba(30,34,84,.55);--line:rgba(92,242,214,.40);--bd:rgba(92,242,214,.55);--line2:rgba(92,242,214,.40);--ink:#E8FBFF;--muted:#8fa3d8;--accent:#5CF2D6;--accent-ink:#031316;--morning:#3B82FF;--night:#B05CFF;--off:#22E3A0;--leave:#FFD60A;--other:#FF3DA5;--daytext:#031016;--bar:transparent;--sh:0 0 0 1px rgba(92,242,214,.18),0 0 26px rgba(92,242,214,.20);--btn-sh:0 0 10px rgba(92,242,214,.28);--day-sh:0 0 14px rgba(92,242,214,.40);--pbg:linear-gradient(135deg,#5CF2D6,#38BDF8);--psh:0 0 22px rgba(92,242,214,.65);--hero-bg:linear-gradient(135deg,#14143f,#3a1c7a);--hero-fg:#fff;--day-bd:1.5px solid rgba(255,255,255,.55)}
+html:root[data-skin="neon"][data-theme="dark"] body::before{display:block;content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(92,242,214,.07) 1px,transparent 1px) 0 0/34px 34px,linear-gradient(90deg,rgba(92,242,214,.07) 1px,transparent 1px) 0 0/34px 34px,radial-gradient(60vmax 40vmax at 100% 0,rgba(176,92,255,.30),transparent 60%),radial-gradient(50vmax 40vmax at 0 100%,rgba(59,130,255,.28),transparent 60%),#05060F}
+html:root[data-skin="neon"][data-theme="dark"] h1,html:root[data-skin="neon"][data-theme="dark"] h2,html:root[data-skin="neon"][data-theme="dark"] h3{color:#E8FBFF;text-shadow:0 0 12px rgba(92,242,214,.55)}
 html:root[data-skin="neon"] .card,html:root[data-skin="neon"] main>.card.calpanel,html:root[data-skin="neon"] .ov .card,html:root[data-skin="neon"] header{border:1.5px solid var(--bd)}
-html:root[data-skin="neon"] button:not(.day):not(.primary){background:rgba(92,242,214,.06);color:var(--accent);border:1.5px solid var(--bd)}
-html:root[data-skin="neon"] button.primary{color:#031316;font-weight:800}
+html:root[data-skin="neon"] button:not(.day):not(.primary){background:rgba(122,60,255,.06);color:var(--accent);border:1.5px solid var(--bd)}
+html:root[data-skin="neon"][data-theme="dark"] button:not(.day):not(.primary){background:rgba(92,242,214,.06)}
+html:root[data-skin="neon"] button.primary{color:#fff;font-weight:800}
+html:root[data-skin="neon"][data-theme="dark"] button.primary{color:#031316}
 html:root[data-skin="neon"] .cal .day{color:#031016;font-weight:800;box-shadow:0 0 14px rgba(255,255,255,.18)}
-html:root[data-skin="neon"] .cal .day.today{outline:2.5px solid #fff;box-shadow:0 0 18px #fff}
+html:root[data-skin="neon"] .cal .day.today{outline:2.5px solid var(--accent);box-shadow:0 0 18px var(--accent)}
 html:root[data-skin="neon"] .cal .day.selected{box-shadow:0 0 0 3px var(--accent),0 0 22px var(--accent)}
 html:root[data-skin="neon"] .pill{color:#031016;box-shadow:0 0 12px rgba(255,255,255,.25)}
-html:root[data-skin="neon"] .ov{background:rgba(3,4,12,.75)}
+html:root[data-skin="neon"] .ov{background:rgba(26,16,64,.45)}
+html:root[data-skin="neon"][data-theme="dark"] .ov{background:rgba(3,4,12,.75)}
 html:root[data-skin="neon"] input,html:root[data-skin="neon"] select,html:root[data-skin="neon"] #dayNote{color:var(--ink);border:1.5px solid var(--bd)}
 
 /* --- Sketch: pencil & comic --- */
@@ -361,6 +366,23 @@ html:root[data-skin="sketch"] .hero{border:2.5px dashed var(--bd);box-shadow:non
 html:root[data-skin="sketch"] .hero h3{text-decoration:none}
 html:root[data-skin="sketch"] .ov{background:rgba(42,42,46,.45)}
 html:root[data-skin="sketch"] .ov .card{background:var(--card)}
+
+/* ===== Distinct frames per skin ===== */
+html:root[data-skin="ledger"]:not(.x) .card,html:root[data-skin="ledger"]:not(.x) .ov .card,html:root[data-skin="ledger"]:not(.x) main>.card.calpanel,html:root[data-skin="ledger"]:not(.x) header{border-radius:26px;box-shadow:inset 0 0 0 5px var(--card),inset 0 0 0 6px var(--line2)}
+html:root[data-skin="ledger"]:not(.x) .cal .day{border-radius:16px 16px 8px 8px}
+html:root[data-skin="soft"]:not(.x) .card,html:root[data-skin="soft"]:not(.x) .ov .card,html:root[data-skin="soft"]:not(.x) main>.card.calpanel,html:root[data-skin="soft"]:not(.x) header{border-radius:46px}
+html:root[data-skin="soft"]:not(.x) .cal .day{border-radius:999px}
+html:root[data-skin="soft"]:not(.x) .hero{border-radius:36px}
+html:root[data-skin="bold"]:not(.x) .card,html:root[data-skin="bold"]:not(.x) .ov .card,html:root[data-skin="bold"]:not(.x) main>.card.calpanel,html:root[data-skin="bold"]:not(.x) header{border-radius:22px;box-shadow:6px 6px 0 #000}
+html:root[data-skin="bold"]:not(.x)[data-theme="dark"] .card,html:root[data-skin="bold"]:not(.x)[data-theme="dark"] main>.card.calpanel,html:root[data-skin="bold"]:not(.x)[data-theme="dark"] header{box-shadow:6px 6px 0 #FFE14D}
+html:root[data-skin="bold"]:not(.x) main>.card.calpanel{transform:rotate(-.5deg)}
+html:root[data-skin="bold"]:not(.x) main>.card:nth-of-type(even){transform:rotate(.4deg)}
+html:root[data-skin="bold"]:not(.x) .cal .day{border-radius:12px 12px 12px 4px;box-shadow:3px 3px 0 #000}
+html:root[data-skin="bold"]:not(.x)[data-theme="dark"] .cal .day{box-shadow:3px 3px 0 #f4f4f4}
+html:root[data-skin="neon"]:not(.x) .card,html:root[data-skin="neon"]:not(.x) .ov .card,html:root[data-skin="neon"]:not(.x) main>.card.calpanel,html:root[data-skin="neon"]:not(.x) header{border-radius:26px;outline:1px solid rgba(122,60,255,.28);outline-offset:5px}
+html:root[data-skin="neon"]:not(.x)[data-theme="dark"] .card,html:root[data-skin="neon"]:not(.x)[data-theme="dark"] main>.card.calpanel,html:root[data-skin="neon"]:not(.x)[data-theme="dark"] header{outline-color:rgba(92,242,214,.28)}
+html:root[data-skin="neon"]:not(.x) .ov .card{outline:0}
+html:root[data-skin="neon"]:not(.x) .cal .day{border-radius:16px 16px 4px 16px}
 </style>
 </head>
 <body>
