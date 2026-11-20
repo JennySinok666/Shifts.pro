@@ -388,6 +388,19 @@ html:root[data-skin="ledger"]:not(.x) .cal .day.selected{box-shadow:inset 0 -5px
 html:root[data-skin="soft"]:not(.x) .cal .day.selected{box-shadow:0 0 0 3px var(--accent),var(--day-sh)}
 html:root[data-skin="bold"]:not(.x) .cal .day.selected{box-shadow:0 0 0 3.5px var(--accent),6px 6px 0 #000}
 html:root[data-skin="bold"]:not(.x)[data-theme="dark"] .cal .day.selected{box-shadow:0 0 0 3.5px var(--accent),6px 6px 0 #f4f4f4}
+
+/* spacing + fixes */
+html:root[data-skin="ledger"]:not(.x) .cal{gap:8px}
+html:root[data-skin="soft"]:not(.x) .cal{gap:8px}
+html:root[data-skin="neon"]:not(.x) .cal{gap:8px}
+html:root[data-skin="sketch"]:not(.x) .cal{gap:8px}
+html:root[data-skin="bold"]:not(.x) .cal{gap:10px 9px}
+html:root[data-skin="ledger"]:not(.x) header{padding:18px 18px 16px}
+html:root[data-skin="bold"]:not(.x) .cal .day.today{outline:0;box-shadow:inset 0 0 0 2.5px #fff,3px 3px 0 #000}
+html:root[data-skin="bold"]:not(.x)[data-theme="dark"] .cal .day.today{box-shadow:inset 0 0 0 2.5px #000,3px 3px 0 #f4f4f4}
+html:root[data-skin="bold"]:not(.x) .cal .day.selected{box-shadow:0 0 0 2.5px var(--accent),4px 4px 0 #000}
+html:root[data-skin="bold"]:not(.x)[data-theme="dark"] .cal .day.selected{box-shadow:0 0 0 2.5px var(--accent),4px 4px 0 #f4f4f4}
+html:root[data-skin="bold"]:not(.x) .cal .day.today.selected{box-shadow:inset 0 0 0 2.5px #fff,0 0 0 2.5px var(--accent),4px 4px 0 #000}
 </style>
 </head>
 <body>
