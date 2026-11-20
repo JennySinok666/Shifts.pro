@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ECEFF3">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Secular+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Secular+One&family=Playpen+Sans+Hebrew:wght@400;600;700&display=swap">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="apple-touch-icon.png">
@@ -284,6 +284,83 @@ html:root[data-skin]:not(.x) .skins button{border-radius:18px}
 html:root[data-skin]:not(.x) .skins .sw{border-radius:12px}
 html:root[data-skin]:not(.x) input,html:root[data-skin]:not(.x) select,html:root[data-skin]:not(.x) #dayNote,html:root[data-skin]:not(.x) .stat,html:root[data-skin]:not(.x) #wizBanner,html:root[data-skin]:not(.x) .skinbox{border-radius:18px}
 html:root[data-skin]:not(.x) .cal .day.today,html:root[data-skin]:not(.x) .cal .day.selected{border-radius:22px}
+
+/* ===== Distinct personalities ===== */
+.skins [data-skin=ledger] .sw{background:repeating-linear-gradient(0deg,#fff 0 5px,#dfe4ee 5px 6px)}
+.skins [data-skin=bold] .sw{background:radial-gradient(#0004 1.2px,#FFE14D 1.6px) 0 0/7px 7px}
+.skins [data-skin=sketch] .sw{background:#fffef8 repeating-linear-gradient(135deg,#2a2a2e30 0 1px,transparent 1px 5px);border:2px solid #2a2a2e;border-radius:12px 8px 14px 6px}
+
+/* --- Ledger: flat accounting paper --- */
+html:root[data-skin="ledger"]{--ruled:rgba(35,66,240,.08)}
+html:root[data-skin="ledger"][data-theme="dark"]{--ruled:rgba(255,255,255,.045)}
+html:root[data-skin="ledger"] body{background-image:repeating-linear-gradient(0deg,transparent 0 31px,var(--ruled) 31px 32px)}
+html:root[data-skin="ledger"] .card,html:root[data-skin="ledger"] main>.card.calpanel{border-color:var(--line2);box-shadow:none}
+html:root[data-skin="ledger"] h3{border-bottom:1.5px dotted var(--line2);padding-bottom:6px}
+html:root[data-skin="ledger"] .cal .day{box-shadow:inset 0 -5px 0 var(--bar);border-bottom-left-radius:10px;border-bottom-right-radius:10px}
+html:root[data-skin="ledger"] .cal .day .num,html:root[data-skin="ledger"] .cal .day b,html:root[data-skin="ledger"] .hero strong{font-variant-numeric:tabular-nums}
+html:root[data-skin="ledger"] button:not(.primary):not(.day){background:transparent}
+
+/* --- Soft: pillowy clay --- */
+html:root[data-skin="soft"] body{background:linear-gradient(160deg,#E4EAF4,#D3DAE8)}
+html:root[data-skin="soft"][data-theme="dark"] body{background:linear-gradient(160deg,#232a3b,#181d2a)}
+html:root[data-skin="soft"] .cal .day{background-image:linear-gradient(150deg,rgba(255,255,255,.55),rgba(255,255,255,0) 55%,rgba(60,80,120,.10))}
+html:root[data-skin="soft"][data-theme="dark"] .cal .day{background-image:linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,0) 55%,rgba(0,0,0,.22))}
+html:root[data-skin="soft"] button:not(.day):not(.primary){background-image:linear-gradient(150deg,rgba(255,255,255,.6),rgba(255,255,255,0) 60%)}
+html:root[data-skin="soft"] h1,html:root[data-skin="soft"] h2,html:root[data-skin="soft"] h3{letter-spacing:.2px}
+html:root[data-skin="soft"] .card,html:root[data-skin="soft"] header{border-color:rgba(255,255,255,.7)}
+html:root[data-skin="soft"][data-theme="dark"] .card,html:root[data-skin="soft"][data-theme="dark"] header{border-color:rgba(255,255,255,.05)}
+
+/* --- Bold: pop-art sticker sheet --- */
+html:root[data-skin="bold"] body{background-image:radial-gradient(rgba(0,0,0,.20) 1.3px,transparent 1.6px);background-size:14px 14px}
+html:root[data-skin="bold"][data-theme="dark"] body{background-image:radial-gradient(rgba(255,255,255,.10) 1.3px,transparent 1.6px)}
+html:root[data-skin="bold"] header{background:#FFE14D;color:#000;--ink:#000;--muted:#222}
+html:root[data-skin="bold"] header h1,html:root[data-skin="bold"] header p,html:root[data-skin="bold"] header .sub{color:#000}
+html:root[data-skin="bold"] header button{background:#fff;color:#000;border-color:#000}
+html:root[data-skin="bold"] .card,html:root[data-skin="bold"] main>.card.calpanel,html:root[data-skin="bold"] .ov .card,html:root[data-skin="bold"] header{border-width:3px}
+html:root[data-skin="bold"] .cal .day{border-width:2.5px;font-weight:800;filter:saturate(1.35)}
+html:root[data-skin="bold"] h1,html:root[data-skin="bold"] h2,html:root[data-skin="bold"] h3{text-transform:none;letter-spacing:.3px}
+html:root[data-skin="bold"] button.primary{color:#000;border:3px solid #000}
+html:root[data-skin="bold"] .cal .day.today{outline:3px dashed var(--accent);outline-offset:2px}
+
+/* --- Neon: always-dark arcade --- */
+html:root[data-skin="neon"],html:root[data-skin="neon"][data-theme]{color-scheme:dark;--bg:#05060F;--card:rgba(10,12,34,.82);--soft:rgba(30,34,84,.55);--line:rgba(92,242,214,.40);--bd:rgba(92,242,214,.55);--line2:rgba(92,242,214,.40);--ink:#E8FBFF;--muted:#8fa3d8;--accent:#5CF2D6;--accent-ink:#031316;--morning:#3B82FF;--night:#B05CFF;--off:#22E3A0;--leave:#FFD60A;--other:#FF3DA5;--daytext:#031016;--bar:transparent;--sh:0 0 0 1px rgba(92,242,214,.18),0 0 26px rgba(92,242,214,.20);--btn-sh:0 0 10px rgba(92,242,214,.28);--day-sh:0 0 14px rgba(92,242,214,.40);--pbg:linear-gradient(135deg,#5CF2D6,#38BDF8);--psh:0 0 22px rgba(92,242,214,.65);--hero-bg:linear-gradient(135deg,#14143f,#3a1c7a);--hero-fg:#fff;--day-bd:1.5px solid rgba(255,255,255,.55)}
+html:root[data-skin="neon"] body::before{display:block;content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(92,242,214,.07) 1px,transparent 1px) 0 0/34px 34px,linear-gradient(90deg,rgba(92,242,214,.07) 1px,transparent 1px) 0 0/34px 34px,radial-gradient(60vmax 40vmax at 100% 0,rgba(176,92,255,.30),transparent 60%),radial-gradient(50vmax 40vmax at 0 100%,rgba(59,130,255,.28),transparent 60%),#05060F}
+html:root[data-skin="neon"] h1,html:root[data-skin="neon"] h2,html:root[data-skin="neon"] h3{color:#E8FBFF;text-shadow:0 0 12px rgba(92,242,214,.55)}
+html:root[data-skin="neon"] .card,html:root[data-skin="neon"] main>.card.calpanel,html:root[data-skin="neon"] .ov .card,html:root[data-skin="neon"] header{border:1.5px solid var(--bd)}
+html:root[data-skin="neon"] button:not(.day):not(.primary){background:rgba(92,242,214,.06);color:var(--accent);border:1.5px solid var(--bd)}
+html:root[data-skin="neon"] button.primary{color:#031316;font-weight:800}
+html:root[data-skin="neon"] .cal .day{color:#031016;font-weight:800;box-shadow:0 0 14px rgba(255,255,255,.18)}
+html:root[data-skin="neon"] .cal .day.today{outline:2.5px solid #fff;box-shadow:0 0 18px #fff}
+html:root[data-skin="neon"] .cal .day.selected{box-shadow:0 0 0 3px var(--accent),0 0 22px var(--accent)}
+html:root[data-skin="neon"] .pill{color:#031016;box-shadow:0 0 12px rgba(255,255,255,.25)}
+html:root[data-skin="neon"] .ov{background:rgba(3,4,12,.75)}
+html:root[data-skin="neon"] input,html:root[data-skin="neon"] select,html:root[data-skin="neon"] #dayNote{color:var(--ink);border:1.5px solid var(--bd)}
+
+/* --- Sketch: pencil & comic --- */
+html:root[data-skin="sketch"]{--bg:#F6F4EE;--card:#FFFEFA;--soft:#F0EDE3;--line:#2A2A2E;--line2:#2A2A2E;--bd:#2A2A2E;--ink:#2A2A2E;--muted:#625F58;--accent:#E8452C;--accent-ink:#2A2A2E;--morning:#9CCBFF;--night:#C9B3FF;--off:#A6E6B6;--leave:#FFD966;--other:#FFB1CF;--daytext:#2A2A2E;--bar:transparent;--sh:3px 4px 0 rgba(42,42,46,.25);--btn-sh:2px 3px 0 rgba(42,42,46,.30);--day-sh:2px 3px 0 rgba(42,42,46,.28);--day-bd:2px solid #2A2A2E;--pbg:#FFD23F;--psh:3px 4px 0 #2A2A2E;--hw:700;--f-disp:"Playpen Sans Hebrew","Heebo",cursive;--hero-bg:#FFFEFA;--hero-fg:#2A2A2E}
+html:root[data-skin="sketch"][data-theme="dark"]{--bg:#20262B;--card:#2A3137;--soft:#323A41;--line:rgba(241,241,234,.80);--line2:rgba(241,241,234,.80);--bd:rgba(241,241,234,.80);--ink:#F1F1EA;--muted:#B9B8AE;--accent:#FFD23F;--accent-ink:#20262B;--morning:#7DB7F5;--night:#B79CF5;--off:#7FD9A0;--leave:#F5D060;--other:#F59BC0;--daytext:#1C2024;--sh:3px 4px 0 rgba(0,0,0,.35);--btn-sh:2px 3px 0 rgba(0,0,0,.4);--day-sh:2px 3px 0 rgba(0,0,0,.4);--day-bd:2px solid rgba(241,241,234,.85);--pbg:#FFD23F;--psh:3px 4px 0 rgba(241,241,234,.9);--hero-bg:#2A3137;--hero-fg:#F1F1EA}
+html:root[data-skin="sketch"] body,html:root[data-skin="sketch"] button,html:root[data-skin="sketch"] input,html:root[data-skin="sketch"] select,html:root[data-skin="sketch"] textarea{font-family:"Playpen Sans Hebrew","Heebo",system-ui,cursive}
+html:root[data-skin="sketch"] body{background-color:var(--bg);background-image:linear-gradient(rgba(70,100,170,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(70,100,170,.13) 1px,transparent 1px);background-size:26px 26px}
+html:root[data-skin="sketch"][data-theme="dark"] body{background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)}
+html:root[data-skin="sketch"] .card,html:root[data-skin="sketch"] main>.card.calpanel,html:root[data-skin="sketch"] .ov .card,html:root[data-skin="sketch"] header{border:2.5px solid var(--bd);border-radius:34px 26px 38px 24px/26px 36px 24px 34px}
+html:root[data-skin="sketch"][data-theme="dark"] .card,html:root[data-skin="sketch"][data-theme="dark"] header{border-style:dashed}
+html:root[data-skin="sketch"] .cal .day{border-radius:20px 16px 22px 14px/16px 22px 14px 20px;font-weight:700}
+html:root[data-skin="sketch"] .cal .day:nth-child(3n){border-radius:16px 22px 14px 20px/22px 14px 20px 16px}
+html:root[data-skin="sketch"] .cal .day:nth-child(4n+1){border-radius:22px 14px 18px 20px/14px 20px 22px 16px}
+html:root[data-skin="sketch"] .cal .day.morning,html:root[data-skin="sketch"] .cal .day.night,html:root[data-skin="sketch"] .cal .day.off,html:root[data-skin="sketch"] .cal .day.leave,html:root[data-skin="sketch"] .cal .day.other{background-image:repeating-linear-gradient(135deg,rgba(42,42,46,.13) 0 1.4px,transparent 1.4px 6px)}
+html:root[data-skin="sketch"][data-theme="dark"] .cal .day.morning,html:root[data-skin="sketch"][data-theme="dark"] .cal .day.night,html:root[data-skin="sketch"][data-theme="dark"] .cal .day.off,html:root[data-skin="sketch"][data-theme="dark"] .cal .day.leave,html:root[data-skin="sketch"][data-theme="dark"] .cal .day.other{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.14) 0 1.4px,transparent 1.4px 6px)}
+html:root[data-skin="sketch"] .cal .day.today{outline:3px solid var(--accent);outline-offset:2px}
+html:root[data-skin="sketch"] .cal .day.selected{box-shadow:0 0 0 3px var(--ink),var(--day-sh)}
+html:root[data-skin="sketch"] button:not(.day):not(.hbtns button),html:root[data-skin="sketch"] .qgrid button,html:root[data-skin="sketch"] .week button,html:root[data-skin="sketch"] .icons button,html:root[data-skin="sketch"] .ctr button{border:2px solid var(--bd);border-radius:18px 12px 20px 14px/14px 20px 12px 18px}
+html:root[data-skin="sketch"] button.primary{color:#2A2A2E;font-weight:700}
+html:root[data-skin="sketch"] .hbtns button,html:root[data-skin="sketch"] .pill{border:2px solid var(--bd);border-radius:999px 800px 999px 700px}
+html:root[data-skin="sketch"] input,html:root[data-skin="sketch"] select,html:root[data-skin="sketch"] #dayNote{border:2px solid var(--bd);border-radius:16px 12px 18px 12px/12px 18px 12px 16px}
+html:root[data-skin="sketch"] h1{transform:rotate(-1.2deg);transform-origin:right center}
+html:root[data-skin="sketch"] h1,html:root[data-skin="sketch"] h2,html:root[data-skin="sketch"] h3{text-decoration:underline wavy rgba(232,69,44,.55);text-decoration-thickness:1.5px;text-underline-offset:6px}
+html:root[data-skin="sketch"] .hero{border:2.5px dashed var(--bd);box-shadow:none}
+html:root[data-skin="sketch"] .hero h3{text-decoration:none}
+html:root[data-skin="sketch"] .ov{background:rgba(42,42,46,.45)}
+html:root[data-skin="sketch"] .ov .card{background:var(--card)}
 </style>
 </head>
 <body>
@@ -364,7 +441,7 @@ html:root[data-skin]:not(.x) .cal .day.today,html:root[data-skin]:not(.x) .cal .
 <div class="sh"><h2>הגדרות</h2><button class="primary" id="closeSettings">סגור</button></div>
 <p id="wizBanner" hidden><b>ברוך הבא!</b> הגדר כאן את המחזור, אורך המשמרת והשכר שלך. אפשר לשנות הכול בהמשך, ולחץ "סיום" כשתסיים.</p>
 <h3>מראה</h3>
-<details class="field skinbox" id="skinBox"><summary>סגנון חלונות</summary><div class="skins" id="skinPick"><button type="button" data-skin="ledger"><i class="sw"></i><span translate="no">Ledger</span></button><button type="button" data-skin="glass"><i class="sw"></i><span translate="no">Liquid Glass</span></button><button type="button" data-skin="soft"><i class="sw"></i><span translate="no">Soft</span></button><button type="button" data-skin="bold"><i class="sw"></i><span translate="no">Bold</span></button><button type="button" data-skin="neon"><i class="sw"></i><span translate="no">Neon</span></button></div></details>
+<details class="field skinbox" id="skinBox"><summary>סגנון חלונות</summary><div class="skins" id="skinPick"><button type="button" data-skin="ledger"><i class="sw"></i><span translate="no">Ledger</span></button><button type="button" data-skin="glass"><i class="sw"></i><span translate="no">Liquid Glass</span></button><button type="button" data-skin="soft"><i class="sw"></i><span translate="no">Soft</span></button><button type="button" data-skin="bold"><i class="sw"></i><span translate="no">Bold</span></button><button type="button" data-skin="neon"><i class="sw"></i><span translate="no">Neon</span></button><button type="button" data-skin="sketch"><i class="sw"></i><span translate="no">Sketch</span></button></div></details>
 <div class="grid3"><div><label for="sLang">שפה</label><select id="sLang"><option value="he">עברית</option><option value="en">English</option><option value="ru">Русский</option></select></div><div><label for="sFont">גופן</label><select id="sFont"><option value="system">מערכת (ברירת מחדל)</option><option value="rounded">עגול</option><option value="serif">סריף</option><option value="mono">מונוספייס</option></select></div><div><label for="sSize">גודל טקסט</label><select id="sSize"><option value="0.9">קטן</option><option value="1">רגיל</option><option value="1.12">גדול</option><option value="1.25">גדול מאוד</option></select></div></div>
 <div class="grid3"><div><label for="sWeight">משקל גופן</label><select id="sWeight"><option value="400">רגיל</option><option value="500">בינוני</option><option value="700">מודגש</option></select></div><div><label for="sItalic">סגנון</label><select id="sItalic"><option value="normal">רגיל</option><option value="italic">נטוי (Italic)</option></select></div></div>
 <h3>צבעים</h3>
@@ -624,7 +701,7 @@ $('theme').onclick=()=>{let dark=document.documentElement.dataset.theme!=='dark'
 $('extraDate').value=key(new Date());toggleType();
 $('salaryMonth').value=monthKey(new Date());
 
-function setSkin(k,save){if(!['ledger','glass','soft','bold','neon'].includes(k))k='glass';document.documentElement.dataset.skin=k;document.querySelectorAll('#skinPick button').forEach(b=>b.classList.toggle('sel',b.dataset.skin===k));if(save){try{localStorage.setItem('shiftSkin',k)}catch(e){}}}
+function setSkin(k,save){if(!['ledger','glass','soft','bold','neon','sketch'].includes(k))k='glass';document.documentElement.dataset.skin=k;document.querySelectorAll('#skinPick button').forEach(b=>b.classList.toggle('sel',b.dataset.skin===k));if(save){try{localStorage.setItem('shiftSkin',k)}catch(e){}}}
 document.querySelectorAll('#skinPick button').forEach(b=>b.onclick=()=>setSkin(b.dataset.skin,true));
 {let k=null;try{k=localStorage.getItem('shiftSkin')}catch(e){}setSkin(k||'glass',false)}
 let saved=null;try{saved=localStorage.getItem('shiftTheme')}catch(e){}if(saved==='dark'){document.documentElement.dataset.theme='dark'}
