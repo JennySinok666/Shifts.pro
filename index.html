@@ -447,6 +447,8 @@ html:root[data-skin] .cal .day.none{background:var(--soft);color:var(--ink)}
 html:root[data-skin] #docAddOv,html:root[data-skin] #docViewOv{background:rgba(10,20,40,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 html:root[data-skin="glass"] #docAddOv .card,html:root[data-skin="glass"] #docViewOv .card{background:rgba(250,252,255,.97)}
 html:root[data-skin="glass"][data-theme="dark"] #docAddOv .card,html:root[data-skin="glass"][data-theme="dark"] #docViewOv .card{background:rgba(22,30,50,.98)}
+
+.docbtns{display:flex;gap:6px;flex-shrink:0}.docbtns button{padding:8px 12px}
 </style>
 </head>
 <body>
@@ -995,7 +997,7 @@ async function renderDocs(){const box=$('docList');let all=[];try{all=await DOCS
 const own=all.filter(d=>d.owner===docOwner()),m=$('docMonthF').value,jf=$('docJobF').value;
 const rows=own.filter(d=>d.month===m&&(jf==='all'||d.job===jf)).sort((a,b)=>b.added-a.added);
 if(!rows.length){const other=own.filter(d=>jf==='all'||d.job===jf).length;box.innerHTML=`<p class="note docempty">${t('אין מסמכים לחודש הזה.')}${other?' '+t('יש מסמכים בחודשים אחרים.'):''}</p>`;return}
-box.innerHTML=rows.map(d=>`<div class="entry docrow"><span><span class="tag int">${d.kind==='payslip'?t('תלוש שכר'):t('חשבונית / קבלה')}</span> ${esc2(d.name)}<br><small class="muted">${esc2(docJobLabel(d.job))} · ${fmtSize(d.size||0)} · ${dateText(new Date(d.added))}</small></span><button data-doc="${d.id}">${t('פתח')}</button></div>`).join('')}
+box.innerHTML=rows.map(d=>`<div class="entry docrow"><span><span class="tag int">${d.kind==='payslip'?t('תלוש שכר'):t('חשבונית / קבלה')}</span> ${esc2(d.name)}<br><small class="muted">${esc2(docJobLabel(d.job))} · ${fmtSize(d.size||0)} · ${dateText(new Date(d.added))}</small></span><span class="docbtns"><button data-doc="${d.id}">${t('פתח')}</button><button data-del="${d.id}">${t('מחק')}</button></span></div>`).join('')}
 function openDocs(){fillDocJobs();if(!$('docMonthF').value)$('docMonthF').value=monthKey(new Date());$('docIosNote').hidden=!(/iP(hone|ad|od)/.test(navigator.userAgent)&&!navigator.standalone&&!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()));$('docOv').hidden=false;renderDocs()}
 $('openDocs').onclick=openDocs;$('docClose').onclick=()=>{$('docOv').hidden=true};
 $('docJobF').onchange=renderDocs;$('docMonthF').onchange=renderDocs;$('docMonthF').oninput=renderDocs;
@@ -1013,7 +1015,14 @@ $('docAddOv').hidden=true;$('docJobF').value=job;$('docMonthF').value=month;rend
 async function viewDoc(id){const all=await DOCS.all();const d=all.find(x=>x.id===id);if(!d)return;docCur=d;$('docViewTitle').textContent=d.name;const body=$('docViewBody');if(body.dataset.url){URL.revokeObjectURL(body.dataset.url);body.dataset.url=''}
 const url=URL.createObjectURL(d.blob);body.dataset.url=url;const native=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
 body.innerHTML=/^image\//.test(d.mime)?`<img src="${url}" alt="" style="max-width:100%;border-radius:14px;display:block;margin:auto">`:native?`<p class="note">${t('לצפייה ב-PDF לחץ על שתף / שמור ובחר אפליקציה לפתיחה.')}</p>`:`<iframe src="${url}" title="" style="width:100%;height:60vh;border:0;border-radius:14px"></iframe>`;$('docViewOv').hidden=false}
-$('docList').addEventListener('click',e=>{const b=e.target.closest('[data-doc]');if(b)viewDoc(b.dataset.doc)});
+async function shareDocFile(d){const C=window.Capacitor;const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(d.blob)});const r=await C.Plugins.Filesystem.writeFile({path:d.name.replace(/[^\w.\-א-ת ]/g,'_'),data:b64,directory:'CACHE'});await C.Plugins.Share.share({title:d.name,url:r.uri})}
+async function openDocFile(id){const native=!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem&&Capacitor.Plugins.Share);
+let w=null;if(!native){try{w=window.open('','_blank')}catch(e){}}
+try{const all=await DOCS.all();const d=all.find(x=>x.id===id);if(!d){if(w)w.close();return}
+if(native){try{await shareDocFile(d)}catch(e){}return}
+const url=URL.createObjectURL(new Blob([d.blob],{type:d.mime||'application/octet-stream'}));
+if(w){w.location.href=url;setTimeout(()=>URL.revokeObjectURL(url),300000)}else{URL.revokeObjectURL(url);viewDoc(id)}}catch(e){if(w)w.close()}}
+$('docList').addEventListener('click',async e=>{const o=e.target.closest('[data-doc]');if(o){openDocFile(o.dataset.doc);return}const x=e.target.closest('[data-del]');if(x){if(!confirm(t('למחוק את המסמך מהמכשיר?')))return;await DOCS.del(x.dataset.del);renderDocs()}});
 function closeDocView(){const body=$('docViewBody');if(body.dataset.url){URL.revokeObjectURL(body.dataset.url);body.dataset.url=''}body.innerHTML='';$('docViewOv').hidden=true;docCur=null}
 $('docViewClose').onclick=closeDocView;
 $('docDel').onclick=async()=>{if(!docCur||!confirm(t('למחוק את המסמך מהמכשיר?')))return;await DOCS.del(docCur.id);closeDocView();renderDocs()};
