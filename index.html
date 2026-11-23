@@ -462,12 +462,12 @@ html:root[data-skin="glass"][data-theme="dark"] #docAddOv .card,html:root[data-s
 @keyframes reveal{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 @keyframes zoomIn{from{opacity:0;transform:translateY(var(--ty,28px)) scale(var(--s,.94))}to{opacity:1;transform:none}}
 @keyframes zoomOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(var(--ty,28px)) scale(var(--s,.94))}}
-.ov.zin{animation:ovIn .3s ease both}
+.ov.zin{animation:bgIn .3s ease both}
 .ov.zin>.card,.ov.zin>*:first-child{transform-origin:var(--tox,50%) var(--toy,50%);animation:zoomIn .55s var(--spring) both}
-.ov.zout{animation:fadeOut .26s ease forwards;pointer-events:none}
+.ov.zout{animation:bgOut .26s ease forwards;pointer-events:none}
 .ov.zout>.card,.ov.zout>*:first-child{transform-origin:var(--tox,50%) var(--toy,50%);animation:zoomOut .26s var(--ease) forwards}
-.qov.zin{animation:ovIn .28s ease both}.qov.zin .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomIn .55s var(--spring) both}
-.qov.out{animation:fadeOut .24s ease forwards;pointer-events:none}.qov.out .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomOut .24s var(--ease) forwards}
+.qov.zin{animation:bgIn .28s ease both}.qov.zin .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomIn .55s var(--spring) both}
+.qov.out{animation:bgOut .24s ease forwards;pointer-events:none}.qov.out .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomOut .24s var(--ease) forwards}
 .day{transition:transform .22s var(--spring),box-shadow .25s ease,border-color .25s ease}
 .day:not(.empty):active{transform:scale(.9);transition-duration:.12s}
 .day.pressing{transform:scale(1.12)!important;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.28);transition:transform .35s var(--spring)}
@@ -486,6 +486,12 @@ html:root .entry button,html:root .entry button:not(.day){flex:0 0 auto;width:au
 html:root .bar>button{white-space:nowrap;flex:0 0 auto;width:auto;min-width:0;height:auto;padding:10px 13px;font-size:14px;border-radius:999px}
 html:root .bar>h2{min-width:0;flex:1 1 auto;text-align:center;font-size:clamp(15px,4.6vw,19px);overflow-wrap:anywhere}
 @media(max-width:340px){html:root .bar>button{padding:9px 10px;font-size:13px}}
+
+/* smooth animations on Android/desktop: no per-frame blur recalculation */
+@keyframes bgIn{from{background-color:transparent}}
+@keyframes bgOut{to{background-color:transparent}}
+.ov *,.qov *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.ov.zin>.card,.ov.zout>.card,.ov.zin>*:first-child,.ov.zout>*:first-child,.qov.zin .qcard,.qov.out .qcard{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;will-change:transform,opacity;backface-visibility:hidden}
 </style>
 </head>
 <body>
