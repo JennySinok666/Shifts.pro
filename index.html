@@ -450,6 +450,29 @@ html:root[data-skin="glass"][data-theme="dark"] #docAddOv .card,html:root[data-s
 
 .docbtns{display:flex;gap:6px;flex-shrink:0}.docbtns button{padding:8px 12px}
 #toTop{position:fixed;left:16px;bottom:calc(20px + max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px)));z-index:70;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transform:translateY(12px) scale(.9);pointer-events:none;transition:opacity .2s,transform .2s}#toTop.show{opacity:1;transform:none;pointer-events:auto}@media(prefers-reduced-motion:reduce){#toTop{transition:none}}
+
+/* ===== iOS-style motion ===== */
+:root{--spring:cubic-bezier(.2,.9,.25,1.18);--ease:cubic-bezier(.32,.72,0,1)}
+@keyframes ovIn{from{opacity:0}to{opacity:1}}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes sheetIn{from{transform:translateY(110%)}to{transform:none}}
+@keyframes sheetOut{to{transform:translateY(110%)}}
+@keyframes fadeOut{to{opacity:0}}
+@keyframes pop{0%{transform:scale(.86)}55%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes reveal{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.ov:not([hidden]){animation:ovIn .28s ease both}
+.ov:not([hidden])>.card,.ov:not([hidden])>*:first-child{animation:cardIn .5s var(--spring) both}
+.qov{animation:ovIn .25s ease both}.qcard{animation:sheetIn .5s var(--spring) both}
+.qov.out{animation:fadeOut .22s ease forwards;pointer-events:none}.qov.out .qcard{animation:sheetOut .22s var(--ease) forwards}
+.day{transition:transform .22s var(--spring),box-shadow .25s ease,border-color .25s ease}
+.day:not(.empty):active{transform:scale(.9);transition-duration:.12s}
+.day.pressing{transform:scale(1.12)!important;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.28);transition:transform .35s var(--spring)}
+.day.selected{animation:pop .4s var(--spring)}
+button:not(.day):not(#toTop){transition:transform .18s var(--spring),background-color .2s,opacity .2s}
+button:not(.day):not(#toTop):active{transform:scale(.95)}
+details[open]>*:not(summary){animation:reveal .35s var(--ease) both}
+#toTop.show{animation:pop .4s var(--spring)}
+@media(prefers-reduced-motion:reduce){.ov,.ov>*,.qov,.qcard,.day,.day.selected,details>*,button{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -1107,7 +1130,7 @@ function addTypeEntry(ds,tid){const c=customOf(tid);if(!c)return;if(intelDays.so
 function typeSheet(ds,d){
  const ov=document.createElement('div');ov.className='qov';const card=document.createElement('div');card.className='qcard';
  const h=document.createElement('h3');h.textContent=t('בחר סוג משמרת')+' · '+dateText(d);card.appendChild(h);
- const g=document.createElement('div');g.className='qgrid';card.appendChild(g);const close=()=>ov.remove();
+ const g=document.createElement('div');g.className='qgrid';card.appendChild(g);const close=()=>{ov.classList.add("out");setTimeout(()=>ov.remove(),220)};
  [...BUILTIN.filter(x=>x!=='חופש'),...(S.customTypes||[]).map(c=>c.id)].forEach(id=>{const b=document.createElement('button');b.type='button';b.className='chip '+cls[id];b.textContent=symbols[id]+' '+SL(id);b.onclick=()=>{close();if(id==='בוקר')document.__quick('m',ds,d);else if(id==='לילה')document.__quick('n',ds,d);else addTypeEntry(ds,id)};g.appendChild(b)});
  const c=document.createElement('button');c.type='button';c.className='qcancel';c.textContent=t('ביטול');c.onclick=close;card.appendChild(c);
  ov.appendChild(card);ov.addEventListener('click',e=>{if(e.target===ov)close()});document.body.appendChild(ov)}
@@ -1118,7 +1141,7 @@ function sheet(ds){
  const card=document.createElement('div');card.className='qcard';
  const h=document.createElement('h3');h.textContent=t('הוספה ליום')+' '+dateText(d);card.appendChild(h);const en=entriesFor(ds);if(en.int.length||en.sec.length){const l=document.createElement('div');l.className='qlist';l.innerHTML=en.int.map(x=>entryRow('int',x)).join('')+en.sec.map(x=>entryRow('sec',x)).join('');card.appendChild(l);l.addEventListener('click',e=>{if(e.target.closest('[data-del]'))setTimeout(()=>{ov.remove();sheet(ds)},30)})}
  const g=document.createElement('div');g.className='qgrid';card.appendChild(g);
- const close=()=>ov.remove();
+ const close=()=>{ov.classList.add("out");setTimeout(()=>ov.remove(),220)};
  const mk=(label,fn,cls)=>{const b=document.createElement('button');b.type='button';b.textContent=t(label);if(cls)b.className=cls;b.onclick=()=>{close();fn()};g.appendChild(b)};
  document.__quick=(val,ds,d)=>{const gr=$('intelGross').value,lb=$('intelLabel').value;$('entryType').value='intel';toggleType();$('extraDate').value=ds;$('intelHours').value=val;$('intelHours').onchange();$('intelGross').value='';$('intelLabel').value='';$('addExtra').click();$('intelGross').value=gr;$('intelLabel').value=lb;selected=d;render()};
  const quick=val=>()=>{const gr=$('intelGross').value,lb=$('intelLabel').value;$('entryType').value='intel';toggleType();$('extraDate').value=ds;$('intelHours').value=val;$('intelHours').onchange();$('intelGross').value='';$('intelLabel').value='';$('addExtra').click();$('intelGross').value=gr;$('intelLabel').value=lb;selected=d;render()};
@@ -1128,7 +1151,7 @@ function sheet(ds){
  const c=document.createElement('button');c.type='button';c.className='qcancel';c.textContent=t('ביטול');c.onclick=close;card.appendChild(c);
  ov.appendChild(card);ov.addEventListener('click',e=>{if(e.target===ov)close()});document.body.appendChild(ov);
 }
-cal.addEventListener('pointerdown',e=>{const b=e.target.closest('.day');if(!b||!b.dataset.ds)return;sx=e.clientX;sy=e.clientY;stop();const ds=b.dataset.ds;timer=setTimeout(()=>{timer=null;lp=Date.now();try{navigator.vibrate&&navigator.vibrate(15)}catch(_){}sheet(ds)},500)});
+cal.addEventListener('pointerdown',e=>{const b=e.target.closest('.day');if(!b||!b.dataset.ds)return;sx=e.clientX;sy=e.clientY;stop();const ds=b.dataset.ds;const pb=b;setTimeout(()=>{if(timer)pb.classList.add('pressing')},120);timer=setTimeout(()=>{timer=null;lp=Date.now();document.querySelectorAll('.day.pressing').forEach(x=>x.classList.remove('pressing'));try{navigator.vibrate&&navigator.vibrate(15)}catch(_){}sheet(ds)},500)});
 cal.addEventListener('pointermove',e=>{if(timer&&(Math.abs(e.clientX-sx)>10||Math.abs(e.clientY-sy)>10))stop()});
 ['pointerup','pointercancel','pointerleave'].forEach(n=>cal.addEventListener(n,stop));
 cal.addEventListener('contextmenu',e=>{if(e.target.closest('.day'))e.preventDefault()});
@@ -1232,5 +1255,9 @@ setInterval(upd,500);
 btn.addEventListener('click',()=>{const o=target();const sm=matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth';if(o)o.scrollTo({top:0,behavior:sm});else window.scrollTo({top:0,behavior:sm})});
 const _sl=window.salLabels;setInterval(()=>{btn.setAttribute('aria-label',t('חזרה למעלה'))},2000);
 })();
+
+document.addEventListener('pointerup',()=>document.querySelectorAll('.day.pressing').forEach(x=>x.classList.remove('pressing')),true);
+document.addEventListener('pointercancel',()=>document.querySelectorAll('.day.pressing').forEach(x=>x.classList.remove('pressing')),true);
+document.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch'){}},true);
 </script>
 </body></html>
