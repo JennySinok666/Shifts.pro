@@ -460,10 +460,14 @@ html:root[data-skin="glass"][data-theme="dark"] #docAddOv .card,html:root[data-s
 @keyframes fadeOut{to{opacity:0}}
 @keyframes pop{0%{transform:scale(.86)}55%{transform:scale(1.08)}100%{transform:scale(1)}}
 @keyframes reveal{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-.ov:not([hidden]){animation:ovIn .28s ease both}
-.ov:not([hidden])>.card,.ov:not([hidden])>*:first-child{animation:cardIn .5s var(--spring) both}
-.qov{animation:ovIn .25s ease both}.qcard{animation:sheetIn .5s var(--spring) both}
-.qov.out{animation:fadeOut .22s ease forwards;pointer-events:none}.qov.out .qcard{animation:sheetOut .22s var(--ease) forwards}
+@keyframes zoomIn{from{opacity:0;transform:translateY(var(--ty,28px)) scale(var(--s,.94))}to{opacity:1;transform:none}}
+@keyframes zoomOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(var(--ty,28px)) scale(var(--s,.94))}}
+.ov.zin{animation:ovIn .3s ease both}
+.ov.zin>.card,.ov.zin>*:first-child{transform-origin:var(--tox,50%) var(--toy,50%);animation:zoomIn .55s var(--spring) both}
+.ov.zout{animation:fadeOut .26s ease forwards;pointer-events:none}
+.ov.zout>.card,.ov.zout>*:first-child{transform-origin:var(--tox,50%) var(--toy,50%);animation:zoomOut .26s var(--ease) forwards}
+.qov.zin{animation:ovIn .28s ease both}.qov.zin .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomIn .55s var(--spring) both}
+.qov.out{animation:fadeOut .24s ease forwards;pointer-events:none}.qov.out .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomOut .24s var(--ease) forwards}
 .day{transition:transform .22s var(--spring),box-shadow .25s ease,border-color .25s ease}
 .day:not(.empty):active{transform:scale(.9);transition-duration:.12s}
 .day.pressing{transform:scale(1.12)!important;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.28);transition:transform .35s var(--spring)}
@@ -472,7 +476,7 @@ button:not(.day):not(#toTop){transition:transform .18s var(--spring),background-
 button:not(.day):not(#toTop):active{transform:scale(.95)}
 details[open]>*:not(summary){animation:reveal .35s var(--ease) both}
 #toTop.show{animation:pop .4s var(--spring)}
-@media(prefers-reduced-motion:reduce){.ov,.ov>*,.qov,.qcard,.day,.day.selected,details>*,button{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.ov,.ov>*,.qov,.qcard,.ov.zin,.ov.zin>*,.qov.zin .qcard,.day,.day.selected,details>*,button{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -1244,7 +1248,7 @@ window.addEventListener('popstate',()=>{
  if(skip>0){skip--;return}
  const id=stack[stack.length-1];if(!id)return;
  ignore++;const b=document.getElementById(CLOSE[id]);if(b)b.click();
- setTimeout(()=>{const el=document.getElementById(id);if(el&&!el.hidden){ignore=Math.max(0,ignore-1);try{history.pushState({ov:id},'')}catch(e){}}},80);
+ setTimeout(()=>{const el=document.getElementById(id);if(el&&!el.hidden&&!el.classList.contains('zout')){ignore=Math.max(0,ignore-1);try{history.pushState({ov:id},'')}catch(e){}}},80);
 });
 const btn=document.createElement('button');btn.id='toTop';btn.type='button';btn.textContent='↑';btn.setAttribute('aria-label',t('חזרה למעלה'));document.body.appendChild(btn);
 function target(){for(let i=stack.length-1;i>=0;i--){const e=document.getElementById(stack[i]);if(e&&!e.hidden)return e}return null}
@@ -1259,5 +1263,38 @@ const _sl=window.salLabels;setInterval(()=>{btn.setAttribute('aria-label',t('ח�
 document.addEventListener('pointerup',()=>document.querySelectorAll('.day.pressing').forEach(x=>x.classList.remove('pressing')),true);
 document.addEventListener('pointercancel',()=>document.querySelectorAll('.day.pressing').forEach(x=>x.classList.remove('pressing')),true);
 document.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch'){}},true);
+
+/* ===== zoom from origin ===== */
+(function(){
+let org=null;
+const grab=e=>{const el=e.target&&e.target.closest&&e.target.closest('button,.day,summary,[role=button],a');if(!el)return;const r=el.getBoundingClientRect();org={x:r.left+r.width/2,y:r.top+r.height/2,t:Date.now()}};
+document.addEventListener('pointerdown',grab,true);document.addEventListener('click',e=>{if(!org||Date.now()-org.t>800)grab(e)},true);
+function setOrigin(ov,card){
+ const fresh=org&&Date.now()-org.t<2500;
+ if(!fresh||!card){ov.style.setProperty('--s','.94');ov.style.setProperty('--ty','28px');ov.style.setProperty('--tox','50%');ov.style.setProperty('--toy','100%');return}
+ const r=card.getBoundingClientRect();
+ ov.style.setProperty('--tox',Math.round(org.x-r.left)+'px');ov.style.setProperty('--toy',Math.round(org.y-r.top)+'px');
+ ov.style.setProperty('--s','.06');ov.style.setProperty('--ty','0px');
+}
+const cardOf=ov=>ov.querySelector(':scope>.card')||ov.firstElementChild;
+document.querySelectorAll('.ov').forEach(ov=>{
+ let tm=null;
+ Object.defineProperty(ov,'hidden',{configurable:true,
+  get(){return this.hasAttribute('hidden')},
+  set(v){
+   if(v){
+    if(this.hasAttribute('hidden')||this.classList.contains('zout'))return;
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches){this.setAttribute('hidden','');this.classList.remove('zin');return}
+    this.classList.remove('zin');this.classList.add('zout');
+    tm=setTimeout(()=>{this.setAttribute('hidden','');this.classList.remove('zout')},270);
+   }else{
+    clearTimeout(tm);this.classList.remove('zout','zin');
+    const was=this.hasAttribute('hidden');this.removeAttribute('hidden');
+    if(was){setOrigin(this,cardOf(this));void this.offsetWidth;this.classList.add('zin')}
+   }
+  }});
+});
+new MutationObserver(ms=>{ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.classList&&n.classList.contains('qov')){const c=n.querySelector('.qcard');setOrigin(n,c);n.classList.add('zin')}}))}).observe(document.body,{childList:true});
+})();
 </script>
 </body></html>
