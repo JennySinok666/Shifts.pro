@@ -465,9 +465,9 @@ html:root[data-skin="glass"][data-theme="dark"] #docAddOv .card,html:root[data-s
 .ov.zin{animation:bgIn .3s ease both}
 .ov.zin>.card,.ov.zin>*:first-child{transform-origin:var(--tox,50%) var(--toy,50%);animation:zoomIn .55s var(--spring) both}
 .ov.zout{animation:bgOut .26s ease forwards;pointer-events:none}
-.ov.zout>.card,.ov.zout>*:first-child{transform-origin:var(--tox,50%) var(--toy,50%);animation:zoomOut .26s var(--ease) forwards}
+.ov.zout>.card,.ov.zout>*:first-child{transform-origin:var(--tox,50%) var(--toy,50%);animation:zoomAway .24s var(--ease) forwards}
 .qov.zin{animation:bgIn .28s ease both}.qov.zin .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomIn .55s var(--spring) both}
-.qov.out{animation:bgOut .24s ease forwards;pointer-events:none}.qov.out .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomOut .24s var(--ease) forwards}
+.qov.out{animation:bgOut .24s ease forwards;pointer-events:none}.qov.out .qcard{transform-origin:var(--tox,50%) var(--toy,100%);animation:zoomAway .22s var(--ease) forwards}
 .day{transition:transform .22s var(--spring),box-shadow .25s ease,border-color .25s ease}
 .day:not(.empty):active{transform:scale(.9);transition-duration:.12s}
 .day.pressing{transform:scale(1.12)!important;z-index:2;box-shadow:0 10px 24px rgba(0,0,0,.28);transition:transform .35s var(--spring)}
@@ -491,7 +491,12 @@ html:root .bar>h2{min-width:0;flex:1 1 auto;text-align:center;font-size:clamp(15
 @keyframes bgIn{from{background-color:transparent}}
 @keyframes bgOut{to{background-color:transparent}}
 .ov *,.qov *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-.ov.zin>.card,.ov.zout>.card,.ov.zin>*:first-child,.ov.zout>*:first-child,.qov.zin .qcard,.qov.out .qcard{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;will-change:transform,opacity;backface-visibility:hidden}
+.ov.zin>.card,.ov.zin>*:first-child{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:hidden}
+@keyframes zoomAway{to{opacity:0;transform:scale(.9)}}
+/* no full-screen blur behind windows (very expensive to animate and scroll on Android/desktop) */
+html:root .ov,html:root .qov{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;overscroll-behavior:contain}
+html.ovlock{overflow:hidden}
+.ov.zin,.qov.zin{contain:layout style}
 
 /* attendance sheet + income chart */
 .sheethead{display:flex;align-items:center;justify-content:space-between;gap:10px}.sheethead h3{margin:0}
@@ -1376,7 +1381,7 @@ document.querySelectorAll('.ov').forEach(ov=>{
    }else{
     clearTimeout(tm);this.classList.remove('zout','zin');
     const was=this.hasAttribute('hidden');this.removeAttribute('hidden');
-    if(was){setOrigin(this,cardOf(this));void this.offsetWidth;this.classList.add('zin')}
+    if(was){this.scrollTop=0;setOrigin(this,cardOf(this));void this.offsetWidth;this.classList.add('zin');const me=this;setTimeout(()=>me.classList.remove('zin'),640)}
    }
   }});
 });
@@ -1549,6 +1554,16 @@ $('mpPrev').onclick=()=>{py--;draw()};$('mpNext').onclick=()=>{py++;draw()};
 $('mpToday').onclick=()=>{const d=new Date();view=new Date(d.getFullYear(),d.getMonth(),1);selected=d;selected.setHours(0,0,0,0);render();$('monthOv').hidden=true};
 $('monthClose').onclick=()=>{$('monthOv').hidden=true};
 $('monthOv').addEventListener('click',e=>{if(e.target===$('monthOv'))$('monthOv').hidden=true});
+})();
+
+/* ===== lock page scroll while a window is open (no scroll chaining to the page behind) ===== */
+(function(){
+let locked=false,y=0;
+function sync(){const open=!!document.querySelector('.ov:not([hidden]),.qov');
+ if(open&&!locked){locked=true;y=window.pageYOffset||document.documentElement.scrollTop||0;const b=document.body;b.style.position='fixed';b.style.top=(-y)+'px';b.style.left='0';b.style.right='0';b.style.width='100%';document.documentElement.classList.add('ovlock')}
+ else if(!open&&locked){locked=false;const b=document.body;b.style.position='';b.style.top='';b.style.left='';b.style.right='';b.style.width='';document.documentElement.classList.remove('ovlock');window.scrollTo(0,y)}}
+new MutationObserver(sync).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden']});
+sync();
 })();
 </script>
 </body></html>
