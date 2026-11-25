@@ -560,6 +560,11 @@ html:root .nbtns button{width:auto;min-width:84px;white-space:nowrap;padding:9px
 .entry.noteentry .nb{display:flex;gap:6px;flex:none}
 html:root .entry.noteentry .nb button{min-width:0;padding:7px 14px}
 .entry.noteentry .ntxt{white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* never let iOS zoom into form fields: controls must be at least 16px on touch screens */
+@media (hover:none) and (pointer:coarse){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea{font-size:16px!important}}
+#noteBox #dayNote{font-size:16px;margin-top:8px;display:block}
+#noteBox .entry.noteentry.editing{background:var(--soft);border-radius:10px;padding-inline:8px}
 </style>
 </head>
 <body>
@@ -920,7 +925,7 @@ function buildCal(c,y,m){c.innerHTML='';
 WD[LANG].forEach(x=>{let e=document.createElement('div');e.className='weekday';e.textContent=x;c.appendChild(e)});
 let offset=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();
 for(let i=0;i<offset;i++){let e=document.createElement('div');e.className='day empty';c.appendChild(e)}
-for(let n=1;n<=count;n++){let d=new Date(y,m,n),s=effShift(d),ds=key(d),en=entriesFor(ds),b=document.createElement('button');b.className='day '+(cls[s]||'before');if(en.int.some(x=>x.kind==='s'||x.kind==='l'))b.classList.add('leave');if(S.notes&&S.notes[ds])b.classList.add('hasnote');if(ds===key(new Date()))b.classList.add('today');if(ds===key(selected))b.classList.add('selected');let num=document.createElement('span');num.className='num';num.textContent=n;b.appendChild(num);let kind=document.createElement('span');kind.className='kind';kind.textContent=SLshort(s);b.appendChild(kind);if(S.notes&&S.notes[ds]){let dn=document.createElement('span');dn.className='dnote';dn.textContent=S.notes[ds];b.appendChild(dn)}let lab=dateText(d)+': '+SL(s),hd=holidayOf(d),hn=null;if(hd){hn=document.createElement('span');hn.className='hname';hn.textContent=holCell(hd);lab+=', '+holFull(hd)}if(hn)b.appendChild(hn);if(en.sec.length||en.int.length){b.classList.add('hasmarks');let mk=document.createElement('div');mk.className='marks';if(en.sec.length){mk.innerHTML+='<span class="mk sec">₪</span>';lab+=', '+t('עבודה נוספת')}if(en.int.length){mk.innerHTML+='<span class="mk int">+</span>';lab+=', '+t('תוספת ידנית')}b.appendChild(mk)}b.setAttribute('aria-label',lab);b.dataset.ds=ds;b.onclick=()=>{selected=d;$('extraDate').value=ds;render()};c.appendChild(b)}}
+for(let n=1;n<=count;n++){let d=new Date(y,m,n),s=effShift(d),ds=key(d),en=entriesFor(ds),b=document.createElement('button');b.className='day '+(cls[s]||'before');if(en.int.some(x=>x.kind==='s'||x.kind==='l'))b.classList.add('leave');const nl=notesOf(ds);if(nl.length)b.classList.add('hasnote');if(ds===key(new Date()))b.classList.add('today');if(ds===key(selected))b.classList.add('selected');let num=document.createElement('span');num.className='num';num.textContent=n;b.appendChild(num);let kind=document.createElement('span');kind.className='kind';kind.textContent=SLshort(s);b.appendChild(kind);if(nl.length){let dn=document.createElement('span');dn.className='dnote';dn.textContent=nl[0]+(nl.length>1?' +'+(nl.length-1):'');b.appendChild(dn)}let lab=dateText(d)+': '+SL(s),hd=holidayOf(d),hn=null;if(hd){hn=document.createElement('span');hn.className='hname';hn.textContent=holCell(hd);lab+=', '+holFull(hd)}if(hn)b.appendChild(hn);if(en.sec.length||en.int.length){b.classList.add('hasmarks');let mk=document.createElement('div');mk.className='marks';if(en.sec.length){mk.innerHTML+='<span class="mk sec">₪</span>';lab+=', '+t('עבודה נוספת')}if(en.int.length){mk.innerHTML+='<span class="mk int">+</span>';lab+=', '+t('תוספת ידנית')}b.appendChild(mk)}b.setAttribute('aria-label',lab);b.dataset.ds=ds;b.onclick=()=>{selected=d;$('extraDate').value=ds;render()};c.appendChild(b)}}
 function render(){
 let y=view.getFullYear(),m=view.getMonth();$('title').textContent=monthYear(new Date(y,m,1));buildCal($('cal'),y,m);
 $('chosen').textContent=dateText(selected);let s=effShift(selected),sel=entriesFor(key(selected)),hol=holidayOf(selected);
@@ -1111,18 +1116,24 @@ $('cycCancel').onclick=()=>{$('cycOv').hidden=true;fillSettings();applySettings(
 $('cycOk').onclick=()=>{S.blocks=compress([...cw,...Array(co).fill('חופש')]);S.cycleMode='cycle';if($('sAnchor').value)S.anchor=$('sAnchor').value;$('cycOv').hidden=true;fillSettings();changed()};
 
 /* day notes */
-let noteEditDs=null;
-function drawNote(){const box=$('noteBox');if(!box)return;const ds=key(selected),v=(S.notes&&S.notes[ds])||'',editing=noteEditDs===ds;
- if(v&&!editing){box.innerHTML=`<div class="entry noteentry"><span><span class="tag note">${t('הערה')}</span><span class="ntxt"></span></span><span class="nb"><button type="button" data-nact="edit">${t('ערוך')}</button><button type="button" data-nact="del">${t('מחק')}</button></span></div>`;box.querySelector('.ntxt').textContent=v;return}
- box.innerHTML=`<textarea id="dayNote" maxlength="300" placeholder="${t('הערה ליום (אופציונלי)')}"></textarea><div class="nbtns"><button type="button" class="primary" data-nact="save">${v?t('שמור'):t('הוסף')}</button>${v?`<button type="button" data-nact="cancel">${t('ביטול')}</button>`:''}</div>`;
- $('dayNote').value=v;if(editing)$('dayNote').focus()}
+let noteEdit=null;
+function notesOf(ds){const v=S.notes&&S.notes[ds];return Array.isArray(v)?v.filter(Boolean):(v?[String(v)]:[])}
+function drawNote(){const box=$('noteBox');if(!box)return;const ds=key(selected),list=notesOf(ds),ed=noteEdit&&noteEdit.ds===ds?noteEdit.i:-1;
+ const old=$('dayNote'),draft=(old&&box.dataset.ds===ds&&box.dataset.ed==='-1')?old.value:'';
+ box.dataset.ds=ds;box.dataset.ed=String(ed);
+ box.innerHTML=list.map((v,i)=>`<div class="entry noteentry${i===ed?' editing':''}"><span><span class="tag note">${t('הערה')}</span><span class="ntxt" data-i="${i}"></span></span><span class="nb"><button type="button" data-nact="edit" data-ni="${i}">${t('ערוך')}</button><button type="button" data-nact="del" data-ni="${i}">${t('מחק')}</button></span></div>`).join('')
+  +`<textarea id="dayNote" maxlength="300" placeholder="${t('הערה ליום (אופציונלי)')}"></textarea><div class="nbtns"><button type="button" class="primary" data-nact="save">${ed>=0?t('שמור'):t('הוסף')}</button>${ed>=0?`<button type="button" data-nact="cancel">${t('ביטול')}</button>`:''}</div>`;
+ box.querySelectorAll('.ntxt').forEach(e=>{e.textContent=list[Number(e.dataset.i)]});
+ $('dayNote').value=ed>=0?list[ed]:draft;if(ed>=0)$('dayNote').focus()}
 $('detail').addEventListener('click',e=>{const b=e.target.closest('[data-nact]');if(!b)return;const ds=key(selected);
  if(!S.notes||typeof S.notes!=='object')S.notes={};
- const act=b.dataset.nact;
- if(act==='edit'){noteEditDs=ds;drawNote()}
- else if(act==='cancel'){noteEditDs=null;drawNote()}
- else if(act==='del'){delete S.notes[ds];noteEditDs=null;saveS();render()}
- else if(act==='save'){const v=($('dayNote').value||'').trim();if(!v){if(S.notes[ds]){delete S.notes[ds];saveS()}noteEditDs=null;render();return}S.notes[ds]=v;noteEditDs=null;saveS();render()}});
+ const act=b.dataset.nact,i=Number(b.dataset.ni),arr=notesOf(ds).slice(),store=()=>{if(arr.length)S.notes[ds]=arr;else delete S.notes[ds]};
+ if(act==='edit'){noteEdit={ds,i};drawNote()}
+ else if(act==='cancel'){noteEdit=null;drawNote()}
+ else if(act==='del'){arr.splice(i,1);store();noteEdit=null;saveS();render()}
+ else if(act==='save'){const v=($('dayNote').value||'').trim(),ed=noteEdit&&noteEdit.ds===ds?noteEdit.i:-1;
+  if(!v){if(ed>=0){arr.splice(ed,1);store();saveS()}noteEdit=null;render();return}
+  if(ed>=0)arr[ed]=v;else arr.push(v);store();noteEdit=null;saveS();render()}});
 /* continuous swipe: the month follows the finger, the next one slides in beside it */
 (function(){
 const cal=$('cal'),host=cal.parentElement;
