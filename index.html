@@ -219,7 +219,7 @@ header .top{flex-wrap:wrap;gap:10px}
 .hbtns{flex-wrap:wrap;flex-shrink:1;min-width:0}
 html[data-skin]:not([data-skin="ledger"]) header h1{white-space:normal}
 html[data-skin]:not([data-skin="ledger"]) .card,html[data-skin]:not([data-skin="ledger"]) header{min-width:0;box-sizing:border-box}
-.skinbox{border:1px solid var(--line);border-radius:12px;padding:0 12px}.skinbox summary{font-family:var(--f-body,inherit);font-size:15px;font-weight:700;padding:11px 0;cursor:pointer}.skinbox[open] summary{margin-bottom:2px}.skinbox .skins{padding-bottom:12px}.setgrp{margin:10px 0}.setgrp>.gbody{padding-bottom:12px}.setgrp>.gbody>h3:first-child{margin-top:4px}
+.skinbox{border:1px solid var(--line);border-radius:12px;padding:0 12px}.skinbox summary{font-family:var(--f-body,inherit);font-size:15px;font-weight:700;padding:11px 0;cursor:pointer}.skinbox[open] summary{margin-bottom:2px}.skinbox .skins{padding-bottom:12px}#tierGrp{margin:14px 0}#tierGrp>.gbody{padding-bottom:12px}
 /* --- Liquid Glass --- */
 html[data-skin="glass"]{--bg:#cfe0ff;--card:rgba(255,255,255,.34);--soft:rgba(255,255,255,.34);--line:rgba(255,255,255,.62);--bd:rgba(255,255,255,.66);--ink:#0e1a30;--muted:#43536e;--accent:#0a84ff;--accent-ink:#fff;--morning:rgba(86,170,255,.52);--night:rgba(170,128,255,.50);--off:rgba(80,210,140,.48);--leave:rgba(255,210,60,.68);--other:rgba(255,122,184,.52);--daytext:#0b1a33;--bar:transparent;--blur:blur(26px) saturate(190%);--shine:inset 0 1.5px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.25),inset 1px 0 0 rgba(255,255,255,.35),inset -1px 0 0 rgba(255,255,255,.35);--sh:var(--shine),0 10px 36px rgba(40,70,140,.18);--btn-sh:var(--shine),0 3px 10px rgba(40,70,140,.10);--r-lg:30px;--r-btn:999px;--r-in:16px;--r-day:20px;--day-bd:1px solid rgba(255,255,255,.6);--day-sh:var(--shine);--pbg:linear-gradient(180deg,rgba(80,170,255,.95),rgba(10,120,245,.92));--psh:inset 0 1.5px 0 rgba(255,255,255,.6),0 6px 18px rgba(10,132,255,.38);--f-disp:"Heebo",system-ui,sans-serif;--hero-bg:rgba(255,255,255,.30);--hero-fg:var(--ink)}
 html[data-skin="glass"][data-theme="dark"]{--bg:#070d1c;--card:rgba(255,255,255,.09);--soft:rgba(255,255,255,.09);--line:rgba(255,255,255,.20);--bd:rgba(255,255,255,.22);--ink:#f2f6ff;--muted:#a9b6cc;--accent:#5eb0ff;--morning:rgba(64,140,240,.46);--night:rgba(140,100,235,.46);--off:rgba(50,185,115,.40);--leave:rgba(200,160,20,.55);--other:rgba(220,80,150,.5);--daytext:#fff;--shine:inset 0 1.5px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(255,255,255,.06),inset 1px 0 0 rgba(255,255,255,.10),inset -1px 0 0 rgba(255,255,255,.10);--sh:var(--shine),0 10px 36px rgba(0,0,0,.45);--btn-sh:var(--shine);--hero-bg:rgba(255,255,255,.08)}
@@ -568,7 +568,12 @@ html:root .entry.noteentry .nb button{min-width:0;padding:7px 14px}
 #noteBox .entry.noteentry.editing{background:var(--soft);border-radius:10px;padding-inline:8px}
 
 /* settings tabs */
+.stabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0 10px;margin:4px 0 6px;position:sticky;top:0;z-index:6;background:var(--card);scrollbar-width:none;-webkit-overflow-scrolling:touch;direction:rtl}
 .stabs::-webkit-scrollbar{display:none}
+.stabs{background:color-mix(in srgb,var(--bg) 40%,transparent)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+html:root .stabs button{flex:0 0 auto;width:auto;min-width:0;padding:9px 16px;border-radius:999px;font-size:14px;font-weight:700;white-space:nowrap;background:var(--soft);border:1px solid var(--line);box-shadow:none}
+html:root .stabs button.on{background:var(--accent);color:#fff;border-color:transparent}
+#settingsOv .sheet[data-active="pay"]>[data-tabg]:not([data-tabg="pay"]),#settingsOv .sheet[data-active="shifts"]>[data-tabg]:not([data-tabg="shifts"]),#settingsOv .sheet[data-active="look"]>[data-tabg]:not([data-tabg="look"]),#settingsOv .sheet[data-active="bal"]>[data-tabg]:not([data-tabg="bal"]),#settingsOv .sheet[data-active="data"]>[data-tabg]:not([data-tabg="data"]),#settingsOv .sheet[data-active="acct"]>[data-tabg]:not([data-tabg="acct"]){display:none!important}
 </style>
 </head>
 <body>
@@ -656,6 +661,7 @@ html:root .entry.noteentry .nb button{min-width:0;padding:7px 14px}
 <div class="ov" id="settingsOv" hidden><section class="card sheet" role="dialog" aria-label="הגדרות">
 <div class="sh"><h2>הגדרות</h2><button class="primary" id="closeSettings">סגור</button></div>
 <p id="wizBanner" hidden><b>ברוך הבא!</b> הגדר כאן את המחזור, אורך המשמרת והשכר שלך. אפשר לשנות הכול בהמשך, ולחץ "סיום" כשתסיים.</p>
+<div class="stabs" id="setTabs" role="tablist" aria-label="הגדרות"><button type="button" role="tab" data-st="pay">שכר</button><button type="button" role="tab" data-st="shifts">משמרות</button><button type="button" role="tab" data-st="look">מראה</button><button type="button" role="tab" data-st="bal">יתרות</button><button type="button" role="tab" data-st="data">נתונים</button><button type="button" role="tab" data-st="acct">חשבון</button></div>
 <h3 data-tab="look">מראה</h3>
 <div class="field" id="skinBox"><label>סגנון חלונות</label><div class="skins" id="skinPick"><button type="button" data-skin="ledger"><i class="sw"></i><span translate="no">Ledger</span></button><button type="button" data-skin="glass"><i class="sw"></i><span translate="no">Liquid Glass</span></button><button type="button" data-skin="soft"><i class="sw"></i><span translate="no">Soft</span></button><button type="button" data-skin="bold"><i class="sw"></i><span translate="no">Bold</span></button><button type="button" data-skin="neon"><i class="sw"></i><span translate="no">Neon</span></button><button type="button" data-skin="sketch"><i class="sw"></i><span translate="no">Sketch</span></button></div></div>
 <div class="grid3"><div><label for="sLang">שפה</label><select id="sLang"><option value="he">עברית</option><option value="en">English</option><option value="ru">Русский</option></select></div><div><label for="sFont">גופן</label><select id="sFont"><option value="system">מערכת (ברירת מחדל)</option><option value="rounded">עגול</option><option value="serif">סריף</option><option value="mono">מונוספייס</option></select></div><div><label for="sSize">גודל טקסט</label><select id="sSize"><option value="0.9">קטן</option><option value="1">רגיל</option><option value="1.12">גדול</option><option value="1.25">גדול מאוד</option></select></div></div>
@@ -688,10 +694,10 @@ html:root .entry.noteentry .nb button{min-width:0;padding:7px 14px}
 <p class="note">כאן קובעים שעת התחלה וסיום לכל סוג משמרת, גם בוקר ולילה וגם סוגים שהוספת. אורך המשמרת בבוקר ובלילה נקבע לפי השעות האלה וקובע את חישוב השכר (למשל 08:00–20:15 הן 12.25 שעות, ו־09:00–19:00 הן 10 שעות). השעות משמשות גם לייצוא ליומן. משמרת שמסתיימת אחרי חצות מסתיימת ביום שלמחרת.</p>
 <div class="grid3"><div><label for="sMStart">בוקר — התחלה</label><input type="time" id="sMStart"></div><div><label for="sMEnd">בוקר — סיום</label><input type="time" id="sMEnd"></div><div><label for="sNStart">לילה — התחלה</label><input type="time" id="sNStart"></div><div><label for="sNEnd">לילה — סיום</label><input type="time" id="sNEnd"></div></div>
 <div class="grid3" id="ctTimes" style="margin-top:8px"></div>
-<h3 data-tab="pay">אחוזי תשלום לפי משמרת</h3>
+<details class="field skinbox" id="tierGrp" data-pin="pay"><summary>אחוזי תשלום לפי משמרת</summary><div class="gbody">
 <p class="note">לכל משמרת מוגדרים טווחי שעות ואחוז משכר השעה. הטווחים נספרים משעת ההתחלה שהגדרת למעלה, ולכן אם המשמרת שלך מתחילה בשעה אחרת הם זזים איתה. אפשר לשנות שעת סיום ואחוז של כל טווח, להוסיף או למחוק טווח. ימים ידניים של 8 שעות או "אחר" מחושבים לפי משמרת הבוקר.</p>
 <div id="tierBox"></div>
-<button type="button" id="resetTiers" style="margin-top:10px">אפס אחוזים</button>
+<button type="button" id="resetTiers" style="margin-top:10px">אפס אחוזים</button></div></details>
 <h3 data-tab="look">תצוגת תאריך ושעה</h3>
 <div class="grid"><div><label for="sTimeFmt">פורמט שעה</label><select id="sTimeFmt"><option value="24">24 שעות (14:30)</option><option value="12">12 שעות (2:30 PM)</option></select></div><div><label for="sDateFmt">פורמט תאריך</label><select id="sDateFmt"><option value="dmy">יום/חודש/שנה (13/11/26)</option><option value="mdy">חודש/יום/שנה (11/13/26)</option><option value="ymd">שנה/חודש/יום (26/11/13)</option></select></div></div>
 <p class="note">הפורמט נקבע כאן ולא לפי הגדרות המכשיר.</p>
@@ -1654,18 +1660,15 @@ new MutationObserver(sync).observe(document.body,{subtree:true,childList:true,at
 sync();
 })();
 
-/* ===== settings accordion ===== */
+/* ===== settings tabs ===== */
 (function(){
-const card=document.querySelector('#settingsOv>.sheet');if(!card)return;
-const names={pay:'שכר',shifts:'משמרות',look:'מראה',bal:'יתרות',data:'נתונים',acct:'חשבון'};
-let cur='look';const grp={};Object.keys(names).forEach(k=>grp[k]=[]);
-[...card.children].forEach(el=>{if(el.classList.contains('sh')||el.id==='wizBanner')return;if(el.tagName==='H3'&&el.dataset.tab)cur=el.dataset.tab;grp[cur].push(el)});
-let openSet=[];try{openSet=JSON.parse(localStorage.getItem('shiftSetOpen')||'[]')}catch(e){}
-const save=()=>{try{localStorage.setItem('shiftSetOpen',JSON.stringify([...card.querySelectorAll('details.setgrp[open]')].map(d=>d.dataset.g)))}catch(e){}};
-Object.keys(names).forEach(k=>{const d=document.createElement('details');d.className='field skinbox setgrp';d.dataset.g=k;if(openSet.includes(k))d.open=true;
- const sm=document.createElement('summary');sm.textContent=names[k];const body=document.createElement('div');body.className='gbody';
- grp[k].forEach((el,i)=>{if(i===0&&el.tagName==='H3'&&(k==='look'||k==='acct')){el.remove();return}body.appendChild(el)});
- d.append(sm,body);card.appendChild(d);d.addEventListener('toggle',save)});
+const card=document.querySelector('#settingsOv>.sheet'),bar=document.getElementById('setTabs');if(!card||!bar)return;
+let cur='look';[...card.children].forEach(el=>{if(el===bar||el.classList.contains('sh')||el.id==='wizBanner')return;if(el.tagName==='H3'&&el.dataset.tab)cur=el.dataset.tab;if(el.dataset.pin)cur=el.dataset.pin;el.dataset.tabg=cur});
+function show(tab,scroll){card.dataset.active=tab;bar.querySelectorAll('button').forEach(b=>{const on=b.dataset.st===tab;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
+ if(scroll){const ov=document.getElementById('settingsOv');ov.scrollTop=0;const b=bar.querySelector('.on');if(b&&b.scrollIntoView)b.scrollIntoView({inline:'center',block:'nearest'})}}
+bar.addEventListener('click',e=>{const b=e.target.closest('button[data-st]');if(b)show(b.dataset.st,true)});
+function reset(){show('pay',false);card.querySelectorAll('details[open]').forEach(d=>d.open=false);const ov=document.getElementById('settingsOv');ov.scrollTop=0;const bb=bar.querySelector('.on');if(bb)bar.scrollLeft=0}
+reset();new MutationObserver(reset).observe(document.getElementById('settingsOv'),{attributes:true,attributeFilter:['hidden']});
 })();
 </script>
 </body></html>
